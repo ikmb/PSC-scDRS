@@ -94,7 +94,5 @@ bash WESscDRS_run.sh
 ```
 	
 # Documentations 
-All further documentation about the pipeline can be found in the [docs/](https://github.com/seirana/WESscDRS/blob/main/docs) directory under the links below:
-* [WESscDRS](https://github.com/seirana/WESscDRS/blob/main/docs/WESscDRS)
-The project was funded by the German Research Foundation (DFG) as part of the Research Unit ????.
+All further documentation about the pipeline can be found in the [docs/](https://github.com/seirana/WESscDRS/blob/main/docs) 
 
