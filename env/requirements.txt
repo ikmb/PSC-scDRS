@@ -1,0 +1,13 @@
+# Python dependencies for WESscDRS
+# Set exact versions you actually use.
+
+scikit-learn
+matplotlib
+requests
+anndata
+pandas
+scanpy
+numpy
+scipy
+gdown
+scdrs
