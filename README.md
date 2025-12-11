@@ -35,7 +35,7 @@ To learn more about the functions, refer to the [Documentations](#documentations
 WESscDRS requires significant computational resources. Ensure your system meets the following minimum requirements:
 
 CPU: At least 16 cores.    
-RAM: At least 32 GB (e.g., WESscDRS may require up to 360 GB).
+RAM: At least 32 GB (e.g., scDRS may require up to 360 GB).
 
 Note: For large datasets, it is recommended to run the pipeline on a high-performance computing (HPC) system.
 
