@@ -92,7 +92,3 @@ The pipeline will run the code smoothly.
 cd /home/WESscDRS
 bash WESscDRS_run.sh
 ```
-	
-# Documentations 
-All further documentation about the pipeline can be found in the [docs/](https://github.com/seirana/WESscDRS/blob/main/docs) 
-
