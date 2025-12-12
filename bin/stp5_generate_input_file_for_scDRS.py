@@ -14,10 +14,10 @@ input:
     ./scDRS/data/magma_10kb_top1000_zscore.74_traits.rv1.gs
     
 output:  
-    ./scDRS/output/zscore_PSC_WES_SAIGE.csv
+    ./scDRS/output/zscore.csv
     ./scDRS/output/geneset/PSC_WES_SAIGE_geneset.gs
-    ./scDRS/output/PLOT_PSC_WES_SAIGE.png
-    ./scDRS/output/significant_genes_PSC_WES_SAIGE_MAGMA.csv
+    ./scDRS/output/PLOT.png
+    ./scDRS/output/significant_genes_MAGMA.csv
 """
 
 from IPython import get_ipython
@@ -83,7 +83,7 @@ if __name__ == '__main__':
         # Fetch gene symbols
         gene_name.iloc[j, 0] = get_gene_symbol(gene_ids[j])
     df = pd.concat([df, gene_name], axis=1)
-    df.to_csv('./scDRS/output/zscore_PSC_WES_SAIGE.csv', index=False)
+    df.to_csv('./scDRS/output/zscore.csv', index=False)
     
     #..........................................................................
     # make geneset fine
@@ -137,17 +137,17 @@ if __name__ == '__main__':
     plt.title('MAGMA gene-based test', fontsize=16, fontweight='bold', loc='center', pad=20)
     
     # show the graph
-    plt.savefig('./scDRS/output/PLOT_PSC_WES_SAIGE.png')
+    plt.savefig('./scDRS/output/PLOT.png')
     plt.show()
     # .........................................................................
     # make list of significant genes
     data = pd.DataFrame()
     
-    file = './scDRS/output/zscore_PSC_WES_SAIGE.csv'
+    file = './scDRS/output/zscore.csv'
     df = pd.read_csv(file, sep=',')
     val_genes = df.loc[df['P'] <= 2.5*1e-6, ['gene_symbol', 'CHR', 'P']]
     val_genes = pd.concat([val_genes, pd.DataFrame(
         {'Column': ['SAIGE'] * len(val_genes)})], axis=1)
     data = pd.concat([data, val_genes], axis=0)
     data.to_csv(
-        './scDRS/output/significant_genes_PSC_WES_SAIGE_MAGMA.csv', index=False)
+        './scDRS/output/significant_genes_MAGMA.csv', index=False)
