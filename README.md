@@ -14,8 +14,6 @@ To learn more about the functions, refer to the [Documentations](#documentations
     	- [Custom configuration](#custom-configuration)
 	- [Installing dependencies](#installing-dependencies)
      - [Downloads](#downloads)
-       - [Downloading PSC-scDRS](#downloading-PSC-scDRS)
-       - [Downloading input data_for PSC-scDRS](#downloading-input-data-for-PSC-scDRS)
      - [Example workflows](#example-workflows)
 		- [Running PSC-scDRS](#running-PSC-scDRS)
   
