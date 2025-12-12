@@ -1,17 +1,17 @@
 #========================================================================
 #after installing BCFtools modify this address .scDRS/data/00-All.vcf.gz
 #input:
-# 	./scDRS/output/bcf_variants_PSC_WES_SingleMarkerPvalues.vcf
+# 	./scDRS/output/bcf_variants.vcf
 #	./scDRS/data/00-All.vcf.gz
 # output:
-#	./scDRS/output/bcf_variants_PSC_WES_SingleMarkerPvalues.vcf.gz
-#	./scDRS/output/variants_with_rsID_PSC_WES_SingleMarkerPvalues.vcf
+#	./scDRS/output/bcf_variants.vcf.gz
+#	./scDRS/output/variants_with_rsID.vcf
 #========================================================================
 ##!/bin/bash
           
-input_vcf="./scDRS/output/bcf_variants_PSC_WES_SingleMarkerPvalues.vcf"
-output_vcf="./scDRS/output/bcf_variants_PSC_WES_SingleMarkerPvalues.vcf.gz"
-annotated_vcf="./scDRS/output/variants_with_rsID_PSC_WES_SingleMarkerPvalues.vcf"
+input_vcf="./scDRS/output/bcf_variants.vcf"
+output_vcf="./scDRS/output/bcf_variant.vcf.gz"
+annotated_vcf="./scDRS/output/variants_with_rsID.vcf"
 
 if [ -f "$input_vcf" ]; then
     bgzip $input_vcf
