@@ -16,6 +16,7 @@ To learn more about the functions, refer to the [Documentations](#documentations
      - [Downloads](#downloads)
      - [Data](#data)
 	 - [Running PSC-scDRS](#running-PSC-scDRS)
+    - [Documents](#documents)
   
 # Pipeline Structure
 ![Image Alt Text](https://github.com/ikmb/PSC-scDRS/blob/main/Images/Pipeline%20Structure.png)
