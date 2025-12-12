@@ -8,7 +8,7 @@ This program generates a file in the desired format for the bcftools function.
 input: 
     './scDRS/data/sample_single_marker_test.zip'
 output:
-    ./scDRS/output/bcf_variants_WES.vcf'
+    ./scDRS/output/bcf_variants.vcf'
 """
 
 from IPython import get_ipython
@@ -42,6 +42,6 @@ bcf = pd.DataFrame({
     "INFO": "."
 })
 
-with open('./scDRS/output/bcf_variants_WES.vcf', 'w') as f:
+with open('./scDRS/output/bcf_variants.vcf', 'w') as f:
     f.write("##fileformat=VCFv4.2\n")
     bcf.to_csv(f, sep="\t", index=False)
