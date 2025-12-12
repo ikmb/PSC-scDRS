@@ -14,8 +14,8 @@ To learn more about the functions, refer to the [Documentations](#documentations
     	- [Custom configuration](#custom-configuration)
 	- [Installing dependencies](#installing-dependencies)
      - [Downloads](#downloads)
-     - [Example workflows](#example-workflows)
-		- [Running PSC-scDRS](#running-PSC-scDRS)
+     - [Data](#data)
+	 - [Running PSC-scDRS](#running-PSC-scDRS)
   
 # Pipeline Structure
 ![Image Alt Text](https://github.com/ikmb/PSC-scDRS/blob/main/Images/Pipeline%20Structure.png)
@@ -73,8 +73,7 @@ Select and install the correct version for your operating system and desired gen
 cd /home/PSC-scDRS
 bash setup_dependencies.sh
 ```
-## Input data
-
+## Data
 
 ## Running PSC-scDRS
 The pipeline will run the code smoothly.
