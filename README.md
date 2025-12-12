@@ -28,7 +28,7 @@ To learn more about the functions, refer to the [Documentations](#documentations
 - [Funding](#funding)
   
 # Pipeline Structure
-![Image Alt Text](https://github.com/seirana/PSC-scDRS/blob/main/Images/Pipeline%20Structure.png)
+![Image Alt Text](https://github.com/ikmb/PSC-scDRS/blob/main/Images/Pipeline%20Structure.png)
 
 # Quick Start
 ## Prerequisites and Configuration
