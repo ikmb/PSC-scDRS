@@ -11,7 +11,6 @@ To learn more about the functions, refer to the [Documentations](#documentations
 - [Pipeline structure](#pipeline-structure)
 - [Quick Start](#quick-start)
 	- [Prerequisites and Configuration](#prerequisites-and-configuration)
-    	- [Pre-configuration](#pre-configuration)
     	- [Custom configuration](#custom-configuration)
 	- [Installing dependencies](#installing-dependencies)
 		- [Step 1: Install pipeline](#step-1-Install-pipeline)
