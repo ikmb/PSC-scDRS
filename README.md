@@ -9,8 +9,6 @@ To learn more about the functions, refer to the [Documentations](#documentations
  
 # Table of contents
 - [Pipeline structure](#pipeline-structure)
-- [Key features](#key-features)
-
 - [Quick Start](#quick-start)
 	- [Prerequisites and Configuration](#prerequisites-and-configuration)
     	- [Pre-configuration](#pre-configuration)
