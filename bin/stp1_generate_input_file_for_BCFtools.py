@@ -8,7 +8,7 @@ This program generates a file in the desired format for the bcftools function.
 input: 
     './scDRS/data/SAIGE_single_marker_test.txt'
 output:
-    ./scDRS/output/bcf_variants_PSC_WES_SAIGE.vcf'
+    ./scDRS/output/bcf_variants_PSC_WES_SingleMarkerPvalues.vcf'
 """
 
 from IPython import get_ipython
@@ -20,25 +20,16 @@ sys.path.append('./scDRS/code/')
 import pandas as pd
 
 
-file = './scDRS/data/SAIGE_single_marker_test.txt'
+file = './scDRS/data/sampleWES.zip'
+reg = pd.read_csv(
+    file,
+    sep=r"\s+",
+    compression="zip"
+)
+reg["reg_index"] = range(len(reg))
 
-with open(file, 'rt') as f:
-    lines = f.readlines()
-
-clmns = lines[0]
-clmns = clmns.split()
-l = len(clmns)
-if clmns[l-1].endswith('\n'):
-    s = clmns[l-1]
-    sl = len(s)
-    clmns[l-1] = s[0:sl-1]
-
-y = pd.DataFrame([x.strip().split() for x in lines], columns=clmns)
-y.drop(y.index[0], axis=0, inplace=True)
-y.reset_index(drop=True, inplace=True)
-reg = y
-reg.loc[:, 'reg_index'] = range(len(reg))
-reg.iloc[:, 2] = reg.iloc[:, 2].str.replace('chr', '', regex=False)
+third_col = reg.columns[2]
+reg[third_col] = reg[third_col].astype(str).str.removeprefix("chr")
 
 bcf = pd.DataFrame({
     "#CHROM": reg.iloc[:, 0],
@@ -51,6 +42,6 @@ bcf = pd.DataFrame({
     "INFO": "."
 })
 
-with open('./scDRS/output/bcf_variants_PSC_WES_SAIGE.vcf', 'w') as f:
+with open('./scDRS/output/bcf_variants_PSC_WES_SingleMarkerPvalues.vcf', 'w') as f:
     f.write("##fileformat=VCFv4.2\n")
     bcf.to_csv(f, sep="\t", index=False)
