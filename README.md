@@ -24,8 +24,6 @@ To learn more about the functions, refer to the [Documentations](#documentations
        - [Downloading input data_for PSC-scDRS](#downloading-input-data-for-PSC-scDRS)
      - [Example workflows](#example-workflows)
 		- [Running PSC-scDRS](#running-PSC-scDRS)
-- [Documentation](#documentation)
-- [Funding](#funding)
   
 # Pipeline Structure
 ![Image Alt Text](https://github.com/ikmb/PSC-scDRS/blob/main/Images/Pipeline%20Structure.png)
