@@ -6,9 +6,9 @@
 This program generates a file in the desired format for the bcftools function.
 
 input: 
-    './scDRS/data/SAIGE_single_marker_test.txt'
+    './scDRS/data/sample_single_marker_test.zip'
 output:
-    ./scDRS/output/bcf_variants_PSC_WES_SingleMarkerPvalues.vcf'
+    ./scDRS/output/bcf_variants_WES.vcf'
 """
 
 from IPython import get_ipython
@@ -20,7 +20,7 @@ sys.path.append('./scDRS/code/')
 import pandas as pd
 
 
-file = './scDRS/data/sampleWES.zip'
+file = './scDRS/data/sample_single_marker_test.zip'
 reg = pd.read_csv(
     file,
     sep=r"\s+",
@@ -42,6 +42,6 @@ bcf = pd.DataFrame({
     "INFO": "."
 })
 
-with open('./scDRS/output/bcf_variants_PSC_WES_SingleMarkerPvalues.vcf', 'w') as f:
+with open('./scDRS/output/bcf_variants_WES.vcf', 'w') as f:
     f.write("##fileformat=VCFv4.2\n")
     bcf.to_csv(f, sep="\t", index=False)
