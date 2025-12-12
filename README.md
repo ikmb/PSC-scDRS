@@ -16,7 +16,6 @@ To learn more about the functions, refer to the [Documentations](#documentations
      - [Downloads](#downloads)
      - [Data](#data)
 	 - [Running PSC-scDRS](#running-PSC-scDRS)
-    - [Documents](#documents)
   
 # Pipeline Structure
 ![Image Alt Text](https://github.com/ikmb/PSC-scDRS/blob/main/Images/Pipeline%20Structure.png)
@@ -75,7 +74,10 @@ cd /home/PSC-scDRS
 bash setup_dependencies.sh
 ```
 ## Data
+Summary statistics of the GAISE single marker test on PSC whole-exome sequencing data are available as the sum_stat.zip file.
+It includes 'CHR' as the chromosome number and 'POS' as the position on the chromosome. 'MarkerID' contains chromosome number:position: major allele: minor allele, Allele1 is the major allele, and 'Allele2' is the minor allele, and  'p.value' is the p-value from the SAGIE single marker test.
 
+The single-cell RNA sequencing data from the healthy human liver from the study by Andrews, T.S. et al. (PMID: 38199298) is provided as a sample dataset after applying the required modifications by the scDRS (PMID: 36050550) method.
 
 ## Running PSC-scDRS
 The pipeline will run the code smoothly.
@@ -83,4 +85,3 @@ The pipeline will run the code smoothly.
 cd /home/PSC-scDRS
 bash PSC-scDRS_run.sh
 ```
-## Documents
