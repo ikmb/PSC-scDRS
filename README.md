@@ -32,12 +32,12 @@ All the codes and needed files for the sample file will be downloaded in this st
 For example, create a workspace named PSC-scDRS in the home directory.
 
 ```bash   
-mkdir -p "$HOME/PSC-scDRS"
+mkdir -p "$HOME/PSC-project"
 ```
 
 2) Clone if missing, otherwise update
 ```bash   
-cd "$HOME/PSC-scDRS"
+cd "$HOME/PSC-project"
 
 if [ -d "PSC-scDRS/.git" ]; then
   echo "Repo already exists → updating"
@@ -62,7 +62,7 @@ Note: Gene coordinates in the single-variant sample file are based on the GRCh38
 
 #### This command installs Python libraries, scDRS, and bcftools.
 ```bash
-cd "$HOME/PSC-scDRS"
+cd "$HOME/PSC-project/PSC-scDRS"
 bash setup_dependencies.sh
 ```
 ## Data
