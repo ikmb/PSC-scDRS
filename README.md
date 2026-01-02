@@ -47,9 +47,7 @@ else
   echo "Cloning repo"
   git clone https://github.com/seirana/PSC-scDRS.git
   cd "PSC-scDRS"
-```bash
-cd /home
-mkdir -p PSC-scDRS
+fi
 ```
 ## Installing dependencies
 PSC-scDRS needs some extra software to run:
