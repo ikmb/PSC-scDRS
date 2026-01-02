@@ -1,5 +1,5 @@
 # PSC-scDRS
-PSC-scDRS is designed to link scRNA-seq with polygenic disease risk at the single-cell resolution, independent of annotated cell types, and suggest drugs for the disease.  
+PSC-scDRS is designed to link single-variant analysis scores with polygenic disease risk at single-cell RNA sequencing.
 
 It provides comprehensive functionalities for:  
  - PSC-scDRS Identifying cells exhibiting excess expression across disease-associated genes implicated by Whole Exome Sequencing (WES).  
