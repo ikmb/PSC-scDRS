@@ -19,11 +19,10 @@ To learn more about the functions, refer to the flowcharts in the [Flowcharts](h
 
 # Quick Start
 ## Prerequisites and Configuration
-PSC-scDRS requires significant computational resources. Ensure your system meets the following minimum requirements.
+PSC-scDRS requires significant computational resources. Ensure your system meets the following minimum requirements.<br/>
 The sample file requires:
-
-CPU: At least 16 cores, and <br/> 
-RAM: At least 32 GB (e.g., scDRS may require up to 360 GB). <br/>
+	CPU: At least 16 cores, and <br/> 
+	RAM: At least 32 GB (e.g., scDRS may require up to 360 GB). <br/>
 Note: For large datasets, it is recommended to run the pipeline on a high-performance computing (HPC) system.
 
 ### Custom configuration
