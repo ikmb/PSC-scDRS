@@ -46,7 +46,12 @@ make -C "$BCFTOOLS_DIR"
 
 echo ">>> Done. Binary is at: $REPO_DIR/$BCFTOOLS_DIR/bcftools"
 
-### 3. Install MAGMA
+### 3.  Download official dbSNP GRCh38 master catalog
+cd "$HOME/PSC-project"
+wget https://ftp.ncbi.nih.gov/snp/latest_release/VCF/GCF_000001405.40.gz
+mv GCF_000001405.40.gz 00-All.vcf.gz
+
+### 4. Install MAGMA
 cd "$HOME/PSC-scDRS"
 mkdir -p reference/magma
 cd reference/magma
