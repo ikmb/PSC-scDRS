@@ -22,7 +22,7 @@ PSC-scDRS requires significant computational resources. Ensure your system meets
 The sample file requires:<br/>
 &nbsp; - CPU: At least 16 cores, and <br/> 
 &nbsp; - RAM: At least 32 GB (e.g., scDRS may require up to 360 GB). <br/>
-Note: For large datasets, it is recommended to run the pipeline on a high-performance computing (HPC) system.
+Note: For large datasets, it is recommended to run the pipeline on a high-performance computing (HPC) system, as the scDRS method may require it, depending on the input files.
 
 ## Downloads
 ### Clone PSC-scDRS
