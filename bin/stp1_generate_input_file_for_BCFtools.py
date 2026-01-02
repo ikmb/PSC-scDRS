@@ -6,21 +6,17 @@
 This program generates a file in the desired format for the bcftools function.
 
 input: 
-    './scDRS/data/sample_single_marker_test.zip'
+    './PSC-project/PSC-scDRS/data/sample_single_marker_test.zip'
 output:
-    ./scDRS/output/bcf_variants.vcf'
+    ./PSC-project/PSC-scDRS/output/bcf_variants.vcf'
 """
 
-from IPython import get_ipython
-import os
-
-import sys
-sys.path.append('./scDRS/code/')
-
 import pandas as pd
+from pathlib import Path
 
+in_dir = Path.home() /"PSC-project"/"PSC-scDRS"
 
-file = './scDRS/data/sample_single_marker_test.zip'
+file = in_dir /"data/sampleWES.zip"
 reg = pd.read_csv(
     file,
     sep=r"\s+",
@@ -42,6 +38,10 @@ bcf = pd.DataFrame({
     "INFO": "."
 })
 
-with open('./scDRS/output/bcf_variants.vcf', 'w') as f:
+out_dir = Path.home() / "PSC-project" / "PSC-scDRS" / "output"
+out_dir.mkdir(parents=True, exist_ok=True)
+
+
+with open(out_dir / "bcf_variants.vcf", 'w') as f:
     f.write("##fileformat=VCFv4.2\n")
     bcf.to_csv(f, sep="\t", index=False)
