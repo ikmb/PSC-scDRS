@@ -6,7 +6,7 @@ echo "   WESscDRS - ONE-TIME SETUP"
 echo "==========================================="
 echo
 
-ENV_NAME="PSC_project"
+ENV_NAME="PSC-project-python"
 
 if [ ! -d "$ENV_NAME" ]; then
     echo ">>> Creating Python virtual environment ($ENV_NAME)"
@@ -19,7 +19,7 @@ echo ">>> Activating environment"
 # shellcheck disable=SC1091
 source "$ENV_NAME/bin/activate"
 
-echo ">>> Installing Python dependencies from requirements.txt"
+echo ">>> Installing Python dependencies from https://github.com/ikmb/PSC-scDRS/edit/main/env/requirements.txt"
 pip install --upgrade pip
 pip install -r requirements.txt
 
