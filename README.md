@@ -8,11 +8,10 @@ To learn more about the functions, refer to the flowcharts in the [Flowcharts](h
 - [Pipeline structure](#pipeline-structure)
 - [Quick Start](#quick-start)
 	- [Prerequisites and Configuration](#prerequisites-and-configuration)
-    	- [Custom configuration](#custom-configuration)
-	- [Installing dependencies](#installing-dependencies)
-     - [Downloads](#downloads)
-     - [Data](#data)
-	 - [Running PSC-scDRS](#running-PSC-scDRS)
+    - [Downloads](#downloads)
+    - [Installing dependencies](installing-dependencies)
+    - [Data](#data)
+	- [Running PSC-scDRS](#running-PSC-scDRS)
   
 # Pipeline Structure
 ![Image Alt Text](https://github.com/ikmb/PSC-scDRS/blob/main/Flowcharts/Pipeline%20Structure.png)
@@ -25,16 +24,8 @@ The sample file requires:<br/>
 &nbsp; - RAM: At least 32 GB (e.g., scDRS may require up to 360 GB). <br/>
 Note: For large datasets, it is recommended to run the pipeline on a high-performance computing (HPC) system.
 
-### Custom configuration
-To fully utilize PSC-scDRS on an HPC or other systems, you must create a custom configuration file specifying:
-
-Available CPU cores and memory.
-Scheduler settings (e.g., local or SLURM).
-Paths for reference databases.
-Please refer to the installation and configuration documentation for more details.
-
 ## Downloads
-### Clone PSC-scDRS  and install 
+### Clone PSC-scDRS
 All the codes and needed files for the sample file will be downloaded in this step.
 
 1. Make a folder where you want to keep data and files for the PSC-scDRS project.
