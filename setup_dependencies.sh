@@ -6,17 +6,18 @@ echo "   WESscDRS - ONE-TIME SETUP"
 echo "==========================================="
 echo
 
-### 1. Python virtual environment + dependencies
-if [ ! -d ".venv" ]; then
-    echo ">>> Creating Python virtual environment (.venv)"
-    python3 -m venv .venv
+ENV_NAME="PSC_project"
+
+if [ ! -d "$ENV_NAME" ]; then
+    echo ">>> Creating Python virtual environment ($ENV_NAME)"
+    python3 -m venv "$ENV_NAME"
 else
-    echo ">>> Python virtual environment (.venv) already exists, reusing"
+    echo ">>> Python virtual environment ($ENV_NAME) already exists, reusing"
 fi
 
 echo ">>> Activating environment"
 # shellcheck disable=SC1091
-source .venv/bin/activate
+source "$ENV_NAME/bin/activate"
 
 echo ">>> Installing Python dependencies from requirements.txt"
 pip install --upgrade pip
@@ -25,7 +26,6 @@ pip install -r requirements.txt
 echo
 echo ">>> Python environment ready."
 echo
-
 ### 2. Install HTSlib + BCFtools (only if not yet there)
 cd "$HOME/PSC-scDRS"
 mkdir -p reference
