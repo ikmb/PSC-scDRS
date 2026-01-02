@@ -1,8 +1,5 @@
 # PSC-scDRS
-PSC-scDRS is designed to link single-variant analysis scores with polygenic disease risk at single-cell RNA sequencing.
-
-It provides comprehensive functionalities for:  
- - PSC-scDRS Identifying cells exhibiting excess expression across disease-associated genes implicated by Whole Exome Sequencing (WES).  
+PSC-scDRS is designed to link single-variant analysis scores with polygenic disease risk at single-cell RNA sequencing. It identifies cells with excess expression of disease-associated genes identified by Whole Exome Sequencing (WES).  
 
 In the [Quick Start](#quick-start) section, you can follow the instructions to install the requirements and run simple samples.
 To learn more about the functions, refer to the [Documentations](#documentations). Additionally, there, you can find detailed instructions on the data type and formats required as input for the PSC-scDRS function.
