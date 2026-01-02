@@ -56,7 +56,7 @@ Pipeline will install it. If there is a problem, check [here](https://samtools.g
 ### step 3: Install MAGMA
 Pipeline will install it. If there is a problem, check [here](https://cncr.nl/research/magma/). <br/>
 
-#### This command installs Python libraries, scDRS, and bcftools.
+#### This command installs Python libraries, scDRS, bcftools, and MAGMA.
 ```bash
 cd "$HOME/PSC-project/PSC-scDRS"
 bash setup_dependencies.sh
