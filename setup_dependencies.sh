@@ -47,18 +47,18 @@ make -C "$BCFTOOLS_DIR"
 echo ">>> Done. Binary is at: $REPO_DIR/$BCFTOOLS_DIR/bcftools"
 
 ### 3.  Download official dbSNP GRCh38 master catalog
-cd "$HOME/PSC-project"
-wget https://ftp.ncbi.nih.gov/snp/latest_release/VCF/GCF_000001405.40.gz
-mv GCF_000001405.40.gz 00-All.vcf.gz
+cd "$HOME/PSC-project/vcf"
+echo ">>> Installing dbSNP master rsID catalogue (GRCh38)"
+wget -nc https://ftp.ncbi.nlm.nih.gov/snp/organisms/human_9606_b151_GRCh38p7/VCF/00-All.vcf.gz
 
 ### 4. Install MAGMA
-cd "$HOME/PSC-scDRS"
-mkdir -p reference/magma
-cd reference/magma
+cd "$HOME/PSC-project"
+mkdir -p magma
+cd magma
 wget https://ctg.cncr.nl/software/MAGMA/ref_data/g1000_eur.zip
 unzip g1000_eur.zip
 
-cd "$HOME/PSC-scDRS/reference/magma"
+cd "$HOME/PSC-project/magma"
 curl -L -o NCBI38.zip "https://vu.data.surf.nl/index.php/s/yj952iHqy5anYhH"
 unzip -o NCBI38.zip
 
