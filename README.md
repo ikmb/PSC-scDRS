@@ -62,7 +62,7 @@ Note: Gene coordinates in the single-variant sample file are based on the GRCh38
 
 #### This command installs Python libraries, scDRS, and bcftools.
 ```bash
-cd /home/PSC-scDRS
+cd "$HOME/PSC-scDRS"
 bash setup_dependencies.sh
 ```
 ## Data
@@ -74,6 +74,6 @@ The single-cell RNA sequencing data from the healthy human liver from the study 
 ## Running PSC-scDRS
 The pipeline will run the code smoothly.
 ```bash
-cd /home/PSC-scDRS
+cd "$HOME/PSC-scDRS"
 bash PSC-scDRS_run.sh
 ```
