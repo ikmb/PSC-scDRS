@@ -28,9 +28,7 @@ Note: For large datasets, it is recommended to run the pipeline on a high-perfor
 ### Clone PSC-scDRS
 All the codes and needed files for the sample file will be downloaded in this step.
 
-1) Make a folder where you want to keep data and files for the PSC-scDRS project.
-For example, create a workspace named PSC-scDRS in the home directory.
-
+1) Create a workspace to keep data and files for the PSC-scDRS project.
 ```bash   
 mkdir -p "$HOME/PSC-project"
 ```
