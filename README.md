@@ -15,7 +15,7 @@ To learn more about the functions, refer to the flowcharts in the [Flowcharts](h
 	 - [Running PSC-scDRS](#running-PSC-scDRS)
   
 # Pipeline Structure
-![Image Alt Text](https://github.com/ikmb/PSC-scDRS/blob/main/Images/Pipeline%20Structure.png)
+![Image Alt Text](https://github.com/ikmb/PSC-scDRS/tree/main/Flowcharts/Pipeline%20Structure.png)
 
 # Quick Start
 ## Prerequisites and Configuration
