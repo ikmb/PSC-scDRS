@@ -28,21 +28,28 @@ Note: For large datasets, it is recommended to run the pipeline on a high-perfor
 ### Clone PSC-scDRS
 All the codes and needed files for the sample file will be downloaded in this step.
 
-1. Make a folder where you want to keep data and files for the PSC-scDRS project.
-For example, make a folder named PSC-scDRS in the home directory.
+1) Make a folder where you want to keep data and files for the PSC-scDRS project.
+For example, create a workspace named PSC-scDRS in the home directory.
+
+```bash   
+mkdir -p "$HOME/PSC-scDRS"
+```
+
+2) Clone if missing, otherwise update
+```bash   
+cd "$HOME/PSC-scDRS"
+
+if [ -d "PSC-scDRS/.git" ]; then
+  echo "Repo already exists → updating"
+  cd "PSC-scDRS"
+  git pull --rebase
+else
+  echo "Cloning repo"
+  git clone https://github.com/seirana/PSC-scDRS.git
+  cd "PSC-scDRS"
 ```bash
 cd /home
 mkdir -p PSC-scDRS
-```
-2. Clone the GitHub repo into that folder
-```bash
-cd /home/PSC-scDRS
-git clone https://github.com/seirana/PSC-scDRS.git
-```
-3. If you get an error like “destination path 'PSC-scDRS' already exists”.
-```bash
-cd /home/PSC-scDRS
-git pull --rebase origin main
 ```
 ## Installing dependencies
 PSC-scDRS needs some extra software to run:
