@@ -62,10 +62,9 @@ cd "$HOME/PSC-project/PSC-scDRS"
 bash setup_dependencies.sh
 ```
 ## Data
-Summary statistics of the GAISE single marker test on PSC whole-exome sequencing data are available as the sum_stat.zip file.
-It includes 'CHR' as the chromosome number and 'POS' as the position on the chromosome. 'MarkerID' contains chromosome number:position: major allele: minor allele, Allele1 is the major allele, and 'Allele2' is the minor allele, and  'p.value' is the p-value from the SAGIE single marker test.
-
-The single-cell RNA sequencing data from the healthy human liver from the study by Andrews, T.S. et al. (PMID: 38199298) is provided as a sample dataset after applying the required modifications by the scDRS (PMID: 36050550) method.
+Summary statistics for the GAISE single-marker test on PSC whole-exome sequencing data are available in the sampleWES.zip file. <br/>
+The single-cell RNA sequencing data from the healthy human liver in the study by Andrews, T.S. et al. (PMID: 38199298) is provided as a sample dataset after applying the required modifications using the scDRS (PMID: 36050550) method, in the HumanLiverHealthyscRNAseqData.h5ad file. <br/>
+Data are available at [data](https://github.com/ikmb/PSC-scDRS/tree/main/data)
 
 ## Running PSC-scDRS
 The pipeline will run the code smoothly.
