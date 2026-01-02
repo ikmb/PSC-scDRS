@@ -1,3 +1,4 @@
+### 1. Install Python dependencies
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -6,7 +7,8 @@ echo "   WESscDRS - ONE-TIME SETUP"
 echo "==========================================="
 echo
 
-ENV_NAME="PSC-project-python"
+cd "$HOME/PSC-project"
+ENV_NAME="pythonENV"
 
 if [ ! -d "$ENV_NAME" ]; then
     echo ">>> Creating Python virtual environment ($ENV_NAME)"
@@ -16,40 +18,33 @@ else
 fi
 
 echo ">>> Activating environment"
-# shellcheck disable=SC1091
 source "$ENV_NAME/bin/activate"
 
-echo ">>> Installing Python dependencies from https://github.com/ikmb/PSC-scDRS/edit/main/env/requirements.txt"
+REQ_FILE="$HOME/PSC-project/PSC-scDRS/env/requirements.txt"
+echo ">>> Installing Python dependencies from $REQ_FILE"
 pip install --upgrade pip
-pip install -r requirements.txt
-
+pip install -r "$REQ_FILE"
 echo
 echo ">>> Python environment ready."
 echo
+
 ### 2. Install HTSlib + BCFtools (only if not yet there)
-cd "$HOME/PSC-scDRS"
-mkdir -p reference
-HTSLIB_DIR="reference/htslib"
-BCFTOOLS_DIR="reference/bcftools"
+cd "$HOME/PSC-project"
+BCFTOOLS_DIR="bcftools"
 
-if [ ! -d "$HTSLIB_DIR" ]; then
-    echo ">>> Cloning htslib into $HTSLIB_DIR"
-    git clone --recurse-submodules https://github.com/samtools/htslib.git "$HTSLIB_DIR"
+if [ ! -d "$BCFTOOLS_DIR/.git" ]; then
+  echo ">>> Cloning bcftools (with submodules) into $BCFTOOLS_DIR"
+  git clone --recurse-submodules https://github.com/samtools/bcftools.git "$BCFTOOLS_DIR"
 else
-    echo ">>> htslib already exists in $HTSLIB_DIR, skipping clone"
-fi
-
-if [ ! -d "$BCFTOOLS_DIR" ]; then
-    echo ">>> Cloning bcftools into $BCFTOOLS_DIR"
-    git clone https://github.com/samtools/bcftools.git "$BCFTOOLS_DIR"
-else
-    echo ">>> bcftools already exists in $BCFTOOLS_DIR, skipping clone"
+  echo ">>> bcftools already exists in $BCFTOOLS_DIR, updating"
+  git -C "$BCFTOOLS_DIR" pull --rebase
+  git -C "$BCFTOOLS_DIR" submodule update --init --recursive
 fi
 
 echo ">>> Building bcftools (make)"
-cd "$BCFTOOLS_DIR"
-make
-cd ../../
+make -C "$BCFTOOLS_DIR"
+
+echo ">>> Done. Binary is at: $REPO_DIR/$BCFTOOLS_DIR/bcftools"
 
 ### 3. Install MAGMA
 cd "$HOME/PSC-scDRS"
