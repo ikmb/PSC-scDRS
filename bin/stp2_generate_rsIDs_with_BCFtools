@@ -15,7 +15,7 @@ annotated_vcf=""$HOME/PSC-project/PSC-scDRS/output/variants_with_rsID.vcf"
 if [ -f "$input_vcf" ]; then
     bgzip $input_vcf
     bcftools index $output_vcf
-    bcftools annotate -a "$HOME/PSC-project/00-All.vcf.gz -c ID $output_vcf -o $annotated_vcf
+    bcftools annotate -a "$HOME/PSC-project/vcf/00-All.vcf.gz -c ID $output_vcf -o $annotated_vcf
 else
     echo "File $input_vcf does not exist!"
 fi
