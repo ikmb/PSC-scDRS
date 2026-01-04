@@ -58,15 +58,18 @@ wget -nc https://ftp.ncbi.nlm.nih.gov/snp/organisms/human_9606_b151_GRCh38p7/VCF
 cd "$HOME/PSC-project"
 mkdir -p magma
 cd magma
-wget https://ctg.cncr.nl/software/MAGMA/ref_data/g1000_eur.zip
-unzip g1000_eur.zip
+curl -L -o g1000_eur.zip \
+  "https://vu.data.surf.nl/index.php/s/VZNByNwpD8qqINe/download?path=%2F&files=g1000_eur.zip"
 
-cd "$HOME/PSC-project/magma"
-curl -L -o NCBI38.zip "https://vu.data.surf.nl/index.php/s/yj952iHqy5anYhH"
+unzip -t g1000_eur.zip
+unzip -o g1000_eur.zip
+
+curl -L -o NCBI38.zip \
+  "https://vu.data.surf.nl/index.php/s/yj952iHqy5anYhH/download?path=%2F&files=NCBI38.zip"
+
+unzip -t NCBI38.zip
 unzip -o NCBI38.zip
-
 echo
 echo "==========================================="
 echo "   ONE-TIME SETUP COMPLETED"
 echo "==========================================="
-
