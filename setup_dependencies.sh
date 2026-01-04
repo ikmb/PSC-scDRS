@@ -47,7 +47,9 @@ make -C "$BCFTOOLS_DIR"
 echo ">>> Done. Binary is at: $REPO_DIR/$BCFTOOLS_DIR/bcftools"
 
 ### 3.  Download official dbSNP GRCh38 master catalog
-cd "$HOME/PSC-project/vcf"
+cd "$HOME/PSC-project"
+mkdir -p vcf
+cd vcf
 echo ">>> Installing dbSNP master rsID catalogue (GRCh38)"
 wget -nc https://ftp.ncbi.nlm.nih.gov/snp/organisms/human_9606_b151_GRCh38p7/VCF/00-All.vcf.gz
 
