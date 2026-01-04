@@ -10,22 +10,18 @@ This program
  4. makes a list of genes with a significant p-value.
 
 input:
-    ./scDRS/output/PSC_WES_SAIGE_step2.genes.out
-    ./scDRS/data/magma_10kb_top1000_zscore.74_traits.rv1.gs
+    ./PSC-project/PSC-scDRS/output/files_step2.genes.out
+    ./PSC-project/PSC-scDRS/data/magma_10kb_top1000_zscore.74_traits.rv1.gs
     
 output:  
-    ./scDRS/output/zscore.csv
-    ./scDRS/output/geneset/PSC_WES_SAIGE_geneset.gs
-    ./scDRS/output/PLOT.png
-    ./scDRS/output/significant_genes_MAGMA.csv
+    ./PSC-project/PSC-scDRS/output/zscore.csv
+    ./PSC-project/PSC-scDRS/output/geneset/files_geneset.gs
+    ./PSC-project/PSC-scDRS/output/PLOT.png
+    ./PSC-project/PSC-scDRS/output/significant_genes_MAGMA.csv
 """
 
-from IPython import get_ipython
-import os
-import sys
-sys.path.append('./scDRS/code/')
-
 import matplotlib.pyplot as plt
+from pathlib import Path
 import pandas as pd
 import numpy as np
 import requests
@@ -70,8 +66,9 @@ if __name__ == '__main__':
 
     # List of Entrez Gene IDs to convert
     gene_name = pd.DataFrame(index=range(1000), columns=['gene_symbol'])
-
-    file = './scDRS/output/PSC_WES_SAIGE_step2.genes.out'
+    dirc = Path.home() /"PSC-project"/"PSC-scDRS"/"output"
+    
+    file = str(dirc /"files_step2.genes.out")
     df = pd.read_csv(file, sep=r'\s+')
     df = df.nlargest(1000, 'ZSTAT') #top 1000 z-scores
     df.index = range(1000)
@@ -83,25 +80,29 @@ if __name__ == '__main__':
         # Fetch gene symbols
         gene_name.iloc[j, 0] = get_gene_symbol(gene_ids[j])
     df = pd.concat([df, gene_name], axis=1)
-    df.to_csv('./scDRS/output/zscore.csv', index=False)
+    df.to_csv(str(dir/"zscore.csv"), index=False)
     
     #..........................................................................
     # make geneset fine
-    file = './scDRS/data/magma_10kb_top1000_zscore.74_traits.rv1.gs'
+    dirc = Path.home() /"PSC-project"/"magma"
+    file = str(dirc/"magma_10kb_top1000_zscore.74_traits.rv1.gs")
     cntrl = pd.read_csv(file, sep="\t")
     geneset = cntrl.loc[[0], :]
     geneset.index = range(len(geneset))
-    geneset.loc[0, 'TRAIT'] = 'PSC_WES_SAIGE'
+    geneset.loc[0, 'TRAIT'] = 'files'
 
     df = df.loc[:, ['gene_symbol', 'ZSTAT']]
     geneset.loc[0, 'GENESET'] = list_maker(df)
 
-    write_file = './scDRS/output/geneset/PSC_WES_SAIGE_geneset.gs'
+    dirc = Path.home() /"PSC-project"/"PSC-scDRS"/"output"/"geneset"
+    dirc.mkdir(parents=True, exist_ok=True)
+    write_file = str(dirc/"files_geneset.gs")
     geneset.to_csv(write_file, sep="\t", index=False)
     
     # .........................................................................
     # build Manhattan plo
-    file = './scDRS/output/PSC_WES_SAIGE_step2.genes.out'
+    dirc = Path.home() /"PSC-project"/"PSC-scDRS"/"output"
+    file = str(dirc / "SC_WES_SAIGE_step2.genes.out")
     df = pd.read_csv(file, sep=r'\s+')
     df = df.loc[:, ['CHR', 'P']]
     dm = df.shape
@@ -137,17 +138,20 @@ if __name__ == '__main__':
     plt.title('MAGMA gene-based test', fontsize=16, fontweight='bold', loc='center', pad=20)
     
     # show the graph
-    plt.savefig('./scDRS/output/PLOT.png')
+    dirc = Path.home() /"PSC-project"/"PSC-scDRS"/"output"
+    plt.savefig(str(dirc / "PLOT.png"))
     plt.show()
     # .........................................................................
     # make list of significant genes
     data = pd.DataFrame()
     
-    file = './scDRS/output/zscore.csv'
+    dirc = Path.home() /"PSC-project"/"PSC-scDRS"/"output"
+    file = str(dirc/"zscore.csv")
     df = pd.read_csv(file, sep=',')
     val_genes = df.loc[df['P'] <= 2.5*1e-6, ['gene_symbol', 'CHR', 'P']]
     val_genes = pd.concat([val_genes, pd.DataFrame(
         {'Column': ['SAIGE'] * len(val_genes)})], axis=1)
     data = pd.concat([data, val_genes], axis=0)
-    data.to_csv(
-        './scDRS/output/significant_genes_MAGMA.csv', index=False)
+    
+    file = str(dirc/"significant_genes_MAGMA.csv")
+    data.to_csv(file, index=False)
