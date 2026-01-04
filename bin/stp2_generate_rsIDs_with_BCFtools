@@ -7,9 +7,9 @@
 #	"$HOME/PSC-project/PSC-scDRS/output/variants_with_rsID.vcf
 #========================================================================
 ##!/bin/bash
-          
-input_vcf="$HOME/PSC-project/PSC-scDRS/output/bcf_variant.vcf"
-output_vcf="$HOME/PSC-project/PSC-scDRS/output/bcf_variant.vcf.gz"
+
+input_vcf="$HOME/PSC-project/PSC-scDRS/output/bcf_variants.vcf"
+output_vcf="$HOME/PSC-project/PSC-scDRS/output/bcf_variants.vcf.gz"
 annotated_vcf="$HOME/PSC-project/PSC-scDRS/output/variants_with_rsID.vcf"
 
 if [ -f "$input_vcf" ]; then
