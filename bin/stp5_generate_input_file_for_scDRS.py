@@ -25,66 +25,75 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 import requests
-import re
-
 
 def list_maker(df):
     x_geneset = ''
-    for i in range(len(df)-1):
+    for i in range(len(df) - 1):
         c = round(float(df.iloc[i, 1]), 4)
         tmp = str(df.iloc[i, 0]) + ':' + str(c) + ','
         x_geneset = x_geneset + tmp
 
-    tmp = str(df.iloc[i+1, 0]) + ':' + str(df.iloc[i+1, 1])
+    tmp = str(df.iloc[i + 1, 0]) + ':' + str(df.iloc[i + 1, 1])
     x_geneset = x_geneset + tmp
     return x_geneset
 
 
-def get_gene_symbol(entrez_id):
-    url = f"https://www.ncbi.nlm.nih.gov/gene/{entrez_id}"
+def entrez_to_symbol(entrez_ids, batch_size=1000):
+    """
+    Batch convert Entrez Gene IDs -> gene symbols using mygene.info.
+    Returns dict: {entrez_id(str): symbol(str)}
+    """
+    entrez_ids = [str(x) for x in entrez_ids]
+    out = {}
 
-    # Send GET request to the NCBI Gene page
-    response = requests.get(url)
+    url = "https://mygene.info/v3/gene"
+    for i in range(0, len(entrez_ids), batch_size):
+        chunk = entrez_ids[i:i + batch_size]
+        r = requests.post(
+            url,
+            json={"ids": chunk, "fields": ["symbol"], "species": "human"},
+            timeout=60,
+        )
+        r.raise_for_status()
 
-    if response.status_code != 200:
-        print(f"Failed to retrieve data for Entrez ID {
-              entrez_id}. Status code: {response.status_code}")
-        return None
+        for rec in r.json():
+            _id = str(rec.get("_id", ""))
+            out[_id] = rec.get("symbol", "")
 
-    # Use a regular expression to find the "Approved Symbol" and its corresponding gene name
-    match = re.search(r'GeneCard for\s*(.*?)\s*</a>', response.text)
-    if match:
-        gene_name = match.group(1).strip()
-        gene_name = re.sub(r'</span>', '', gene_name)
-        return gene_name
-    else:
-        print(f"Approved symbol not found for Entrez ID {entrez_id}")
-        return None
+    return out
 
 
 if __name__ == '__main__':
 
-    # List of Entrez Gene IDs to convert
-    gene_name = pd.DataFrame(index=range(1000), columns=['gene_symbol'])
-    dirc = Path.home() /"PSC-project"/"PSC-scDRS"/"output"
-    
-    file = str(dirc /"files_step2.genes.out")
-    df = pd.read_csv(file, sep=r'\s+')
-    df = df.nlargest(1000, 'ZSTAT') #top 1000 z-scores
-    df.index = range(1000)
-    df.loc[df['ZSTAT'] > 10, 'ZSTAT'] = 10
-    gene_ids = list(df.iloc[:, 0])
-    gene_ids = [str(g) for g in gene_ids]
+    # Output directory
+    dirc = Path.home() / "PSC-project" / "PSC-scDRS" / "output"
 
-    for j in range(1000):
-        # Fetch gene symbols
-        gene_name.iloc[j, 0] = get_gene_symbol(gene_ids[j])
+    file = dirc / "files_step2.genes.out"
+    df = pd.read_csv(file, sep=r"\s+")
+
+    # top 1000 z-scores
+    df = df.nlargest(1000, "ZSTAT").reset_index(drop=True)
+    df.loc[df["ZSTAT"] > 10, "ZSTAT"] = 10
+
+    # Entrez IDs (first column)
+    gene_ids = df.iloc[:, 0].astype(str).tolist()
+
+    # Batch mapping (fast + robust)
+    mapping = entrez_to_symbol(gene_ids)
+
+    gene_name = pd.DataFrame({
+        "gene_symbol": [mapping.get(g, "") for g in gene_ids]
+    })
+
     df = pd.concat([df, gene_name], axis=1)
-    df.to_csv(str(dir/"zscore.csv"), index=False)
-    
+
+    out_csv = dirc / "zscore.csv"
+    df.to_csv(out_csv, index=False)
+    print("Saved:", out_csv)
+
     #..........................................................................
     # make geneset fine
-    dirc = Path.home() /"PSC-project"/"magma"
+    dirc = Path.home() /"PSC-project"/"PSC-scDRS"/"data"
     file = str(dirc/"magma_10kb_top1000_zscore.74_traits.rv1.gs")
     cntrl = pd.read_csv(file, sep="\t")
     geneset = cntrl.loc[[0], :]
@@ -102,7 +111,7 @@ if __name__ == '__main__':
     # .........................................................................
     # build Manhattan plo
     dirc = Path.home() /"PSC-project"/"PSC-scDRS"/"output"
-    file = str(dirc / "SC_WES_SAIGE_step2.genes.out")
+    file = str(dirc / "files_step2.genes.out")
     df = pd.read_csv(file, sep=r'\s+')
     df = df.loc[:, ['CHR', 'P']]
     dm = df.shape
