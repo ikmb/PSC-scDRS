@@ -6,62 +6,63 @@
 This function runs scDRS across the desired traits and tissues.
 
 input:
-    ../scDRS/data/single cell datasets/{tissue}.h5ad
-    ./scDRS/output/geneset/{trait}_geneset.gs
+    ./PSC-project/PSC-scDRS/data/{tissue}.h5ad
+    ./PSC-project/PSC-scDRS/output/{trait}_geneset.gs
     
 output:
-    ./scDRS/output/cov/{tissue}_cov.tsv
-    ./scDRS/output/{tissue}/{trait}.full_score.gz
-    ./scDRS/output/{tissue}/{trait}.score.gz
-    ./scDRS/output/{tissue}/{trait}.scdrs_group.cell_ontology_class
-    ./scDRS/code/figures/cell_ontology_classes_{tissue}.png
-    ./scDRS/code/figures/associated_cells_of_{tissue}_to_{geneset}.png
+    ./PSC-project/PSC-scDRS/output/{tissue}_cov.tsv
+    ./PSC-project/PSC-scDRS/output/{tissue}_{trait}.full_score.gz
+    ./PSC-project/PSC-scDRS/output/{tissue}_{trait}.score.gz
+    ./PSC-project/PSC-scDRS/output/{tissue}_{trait}.scdrs_group.cell_ontology_class
+    ./PSC-project/PSC-scDRS/bin/figures/cell_ontology_classes_{tissue}.png
+    ./PSC-project/PSC-scDRS/bin/figures/associated_cells_of_{tissue}_to_{geneset}.png
 """
 
-from IPython import get_ipython
-import os
-
-import sys
-sys.path.append('./scDRS/code/')
-
+from pathlib import Path
 import pandas as pd
 import scanpy as sc
 import numpy as np
 import subprocess
 import warnings
+import zipfile
 import scdrs_
-import sys
+import os
 
 warnings.filterwarnings("ignore")
 
-tissue = 'sampleCS'
-which_traits = 'sammpleWES'
+trait = 'PSC'
+tissue = "Liver"
 
 hm = 'hsapiens'
 
-path = './scDRS/output/'+tissue
-if not os.path.exists(path):
-    os.mkdir(path)
+data_dirc = Path.home() / "PSC-project" / "PSC-scDRS" / "data"
+out_dirc = Path.home() / "PSC-project" / "PSC-scDRS" / "output"
 
-adata = sc.read_h5ad('../scDRS/data/sinlge cell datasets/{tissue}.h5ad')
+zip_path = data_dirc / "HumanLiverHealthyscRNAseqData.zip"
+target_path = data_dirc / "Liver.h5ad"
+with zipfile.ZipFile(zip_path) as z:
+    h5ad_inside = [n for n in z.namelist() if n.endswith(".h5ad")][0]
+    extracted_path = z.extract(h5ad_inside, data_dirc)
+    Path(extracted_path).rename(target_path)
+    
+adata = sc.read_h5ad(data_dirc / f"{tissue}.h5ad")
 
 cell_id = adata.obs.index
 cell_id = cell_id.to_frame(index=False)
+
 n_genes = adata.obs.loc[:, ['n_genes']]
 n_genes.index = range(len(n_genes))
+
 const = np.ones((len(cell_id), 1), dtype=int)
 const = pd.DataFrame(columns=['const'], data=const)
 cov = pd.concat([cell_id, n_genes, const], axis=1)
-cov.to_csv('./scDRS/output/cov/{tissue}_cov.tsv', sep="\t", index=False)
-
-
-which_geneset = f'{which_traits}_geneset.gs'
+cov.to_csv(str(out_dirc/f"{tissue}_cov.tsv"), sep="\t", index=False)
 
 args = [
-    '--h5ad_file', '../scDRS/data/sinlge cell datasets/{tissue}.h5ad',
+    '--h5ad_file',  str(data_dirc/ f'{tissue}.h5ad'),
     '--h5ad_species', hm,
-    '--cov_file', './scDRS/output/cov/{tissue}_cov.tsv',
-    '--gs_file', './scDRS/output/geneset/{which_geneset}',
+    '--cov_file', str(out_dirc/ f'{tissue}_cov.tsv'),
+    '--gs_file', str(out_dirc/f'{trait}_geneset.gs'),
     '--gs_species', 'hsapiens',
     '--ctrl_match_opt', "mean_var",
     '--weight_opt', "vs",
@@ -69,23 +70,23 @@ args = [
     '--n_ctrl', "1000",
     '--flag_return_ctrl_raw_score', "False",
     '--flag_return_ctrl_norm_score', "True",
-    '--out_folder', './scDRS/output/{tissue}/',
+    '--out_folder', str(out_dirc)
 ]
 
 subprocess.run(
-    ['python', '/home/shashemi/scDRS/compute_score.py'] + args)
+    ['python', str(Path.home() /'scDRS/compute_score.py')] + args)
 
-df_gs = pd.read_csv('./scDRS/output/geneset/' +
-                    which_geneset, sep="\t", index_col=0)
+geneset = str(out_dirc/f'{trait}_geneset.gs')
+df_gs = pd.read_csv(geneset, sep="\t", index_col=0)
 dict_score = {
     trait: pd.read_csv(
-        "./scDRS/output/{tissue}/{trait}.full_score.gz", sep="\t", index_col=0)
+        out_dirc/f"{trait}.full_score.gz", sep="\t", index_col=0)
     for trait in df_gs.index
-    if os.path.isfile("./scDRS/output/{tissue}/{trait}.full_score.gz")
+    if os.path.isfile(str(out_dirc/f"{trait}.full_score.gz"))
 }
 
 for trait in dict_score:
-    if os.path.isfile("./scDRS/output/{tissue}/{trait}.full_score.gz"):
+    if os.path.isfile(str(out_dirc/f"{trait}.full_score.gz")):
         adata.obs[trait] = dict_score[trait]["norm_score"]
 
 if len(dict_score) > 0:
@@ -97,7 +98,7 @@ if len(dict_score) > 0:
         color_map="RdBu_r",
         vmin=-5,
         vmax=5,
-        save=f'cell_ontology_classes_{tissue}.png'
+        save=f'_cell_ontology_classes_{tissue}.png'
     )
 
     sc.pl.umap(
@@ -107,13 +108,13 @@ if len(dict_score) > 0:
         vmin=-5,
         vmax=5,
         s=20,
-        save=f'associated_cells_of_{tissue}_to_{which_geneset}.png'
+        save=f'_associated_cells_of_{tissue}_to_{trait}.png'
     )
 
-if os.path.isfile("./scDRS/output/{tissue}/{which_traits}.full_score.gz"):
+if os.path.isfile(str(out_dirc/f"{trait}.full_score.gz")):
     scdrs_.perform_downstream(
-        h5ad_file='./scDRS/output/{tissue}.h5ad',
-        score_file='./scDRS/output/{tissue}/{which_traits}.full_score.gz',
-        out_folder='./scDRS/output/{tissue}/',
+        h5ad_file = str(data_dirc/ f'{tissue}.h5ad'),
+        score_file = str(out_dirc/f"{trait}.full_score.gz"),
+        out_folder = str(out_dirc),
         group_analysis="cell_ontology_class",
     )
