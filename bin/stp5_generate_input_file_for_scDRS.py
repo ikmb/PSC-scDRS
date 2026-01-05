@@ -15,8 +15,8 @@ input:
     
 output:  
     ./PSC-project/PSC-scDRS/output/zscore.csv
-    ./PSC-project/PSC-scDRS/output/geneset/files_geneset.gs
-    ./PSC-project/PSC-scDRS/output/PLOT.png
+    ./PSC-project/PSC-scDRS/output/PSC_geneset.gs
+    ./PSC-project/PSC-scDRS/output/gene_based_test.png
     ./PSC-project/PSC-scDRS/output/significant_genes_MAGMA.csv
 """
 
@@ -103,7 +103,7 @@ if __name__ == '__main__':
     df = df.loc[:, ['gene_symbol', 'ZSTAT']]
     geneset.loc[0, 'GENESET'] = list_maker(df)
 
-    dirc = Path.home() /"PSC-project"/"PSC-scDRS"/"output"/"geneset"
+    dirc = Path.home() /"PSC-project"/"PSC-scDRS"/"output"
     dirc.mkdir(parents=True, exist_ok=True)
     write_file = str(dirc/"PSC_geneset.gs")
     geneset.to_csv(write_file, sep="\t", index=False)
