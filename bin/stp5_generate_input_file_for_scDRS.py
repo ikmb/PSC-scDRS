@@ -98,14 +98,14 @@ if __name__ == '__main__':
     cntrl = pd.read_csv(file, sep="\t")
     geneset = cntrl.loc[[0], :]
     geneset.index = range(len(geneset))
-    geneset.loc[0, 'TRAIT'] = 'files'
+    geneset.loc[0, 'TRAIT'] = 'PSC'
 
     df = df.loc[:, ['gene_symbol', 'ZSTAT']]
     geneset.loc[0, 'GENESET'] = list_maker(df)
 
     dirc = Path.home() /"PSC-project"/"PSC-scDRS"/"output"/"geneset"
     dirc.mkdir(parents=True, exist_ok=True)
-    write_file = str(dirc/"files_geneset.gs")
+    write_file = str(dirc/"PSC_geneset.gs")
     geneset.to_csv(write_file, sep="\t", index=False)
     
     # .........................................................................
@@ -148,7 +148,7 @@ if __name__ == '__main__':
     
     # show the graph
     dirc = Path.home() /"PSC-project"/"PSC-scDRS"/"output"
-    plt.savefig(str(dirc / "PLOT.png"))
+    plt.savefig(str(dirc / "gene_based_test.png"))
     plt.show()
     # .........................................................................
     # make list of significant genes
