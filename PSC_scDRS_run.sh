@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo ">>> RUNNING FULL WESscDRS PIPELINE"
+echo ">>> RUNNING FULL PSC-scDRS PIPELINE"
 echo
 
 ### === STEP 1: Python ===
