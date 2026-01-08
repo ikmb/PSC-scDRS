@@ -7,6 +7,8 @@ echo "   WESscDRS - ONE-TIME SETUP"
 echo "==========================================="
 echo
 
+apt install python3.12-venv
+
 cd "$HOME/PSC-project"
 ENV_NAME="pythonENV"
 
@@ -19,7 +21,7 @@ fi
 
 echo ">>> Activating environment"
 source "$ENV_NAME/bin/activate"
-
+                      
 REQ_FILE="$HOME/PSC-project/PSC-scDRS/env/requirements.txt"
 echo ">>> Installing Python dependencies from $REQ_FILE"
 pip install --upgrade pip
