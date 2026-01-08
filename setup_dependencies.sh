@@ -2,7 +2,7 @@
 set -euo pipefail
 
 echo "==========================================="
-echo "   WESscDRS - ONE-TIME SETUP"
+echo "   PSCscDRS - ONE-TIME SETUP"
 echo "==========================================="
 echo
 
