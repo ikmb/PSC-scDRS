@@ -35,19 +35,43 @@ All the codes and needed files for the sample file will be downloaded in this st
 mkdir -p "$HOME/PSC-project"
 ```
 
-2) Clone if missing, otherwise update
+2) Clone if missing, otherwise update or re-download
 ```bash   
 cd "$HOME/PSC-project"
 
 if [ -d "PSC-scDRS/.git" ]; then
-  echo "Repo already exists → updating"
-  cd "PSC-scDRS"
-  git pull --rebase
+  echo "⚠ PSC-scDRS already exists."
+  echo
+  echo "Choose what you want to do:"
+  echo "  [U] Update (git pull, keep your files)"
+  echo "  [R] Re-download (DELETE local repo and clone fresh)"
+  echo "  [A] Abort"
+
+  read -rp "Your choice [U/R/A]: " choice
+
+  case "$choice" in
+    U|u)
+      echo ">>> Updating existing repo"
+      cd PSC-scDRS
+      git pull --rebase
+      ;;
+    R|r)
+      echo ">>> Re-downloading repo (local PSC-scDRS will be deleted)"
+      rm -rf PSC-scDRS
+      git clone https://github.com/seirana/PSC-scDRS.git
+      cd PSC-scDRS
+      ;;
+    *)
+      echo "Aborted."
+      exit 0
+      ;;
+  esac
 else
-  echo "Cloning repo"
+  echo ">>> Cloning repo"
   git clone https://github.com/seirana/PSC-scDRS.git
-  cd "PSC-scDRS"
+  cd PSC-scDRS
 fi
+
 ```
 ## Installing dependencies
 PSC-scDRS needs some extra software to run:
