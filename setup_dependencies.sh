@@ -61,7 +61,7 @@ echo ">>> Python environment ready."
 echo
 
 ### 2. Install HTSlib + BCFtools (only if not yet there)
-cd "$HOME/PSC-project"
+cd "$HOME/PSC-project/PSC-scDRS"
 BCFTOOLS_DIR="bcftools"
 
 if [ ! -d "$BCFTOOLS_DIR/.git" ]; then
@@ -74,12 +74,25 @@ else
 fi
 
 echo ">>> Building bcftools (make)"
+cd "$HOME/PSC-project/PSC-scDRS"
+HTSLIB_DIR="htslib"
+
+if [ ! -d "$HTSLIB_DIR/.git" ]; then
+  echo ">>> Cloning htslib into $HTSLIB_DIR"
+  git clone https://github.com/samtools/htslib.git "$HTSLIB_DIR"
+else
+  echo ">>> htslib already exists in $HTSLIB_DIR, updating"
+  git -C "$HTSLIB_DIR" pull --rebase
+fi
+
+echo ">>> Building htslib"
+make -C "$HTSLIB_DIR"
 make -C "$BCFTOOLS_DIR"
 
-echo ">>> Done. Binary is at: $HOME/PSC-project/$BCFTOOLS_DIR/bcftools"
+echo ">>> Done. Binary is at: $HOME/PSC-project/PSC-scDRS/$BCFTOOLS_DIR/bcftools"
 
 ### 3. Download official dbSNP GRCh38 master catalog
-cd "$HOME/PSC-project"
+cd "$HOME/PSC-project/PSC-scDRS"
 mkdir -p vcf
 cd vcf
 echo ">>> Installing dbSNP master rsID catalogue (GRCh38)"
@@ -87,7 +100,7 @@ wget -nc https://ftp.ncbi.nlm.nih.gov/snp/organisms/human_9606_b151_GRCh38p7/VCF
 wget -nc https://ftp.ncbi.nlm.nih.gov/snp/organisms/human_9606_b151_GRCh38p7/VCF/00-All.vcf.gz.tbi
 
 ### 4. Install MAGMA
-cd "$HOME/PSC-project"
+cd "$HOME/PSC-project/PSC-scDRS"
 mkdir -p magma
 cd magma
 
