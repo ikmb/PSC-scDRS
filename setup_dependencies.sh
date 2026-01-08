@@ -7,7 +7,28 @@ echo "   WESscDRS - ONE-TIME SETUP"
 echo "==========================================="
 echo
 
-apt install python3.12-venv
+set -e
+bash
+Copy code
+echo "Checking Python installation..."
+
+if ! command -v python3 >/dev/null 2>&1; then
+    echo "Python is not installed."
+    INSTALL_PYTHON=true
+else
+    PY_VER=$(python3 - <<EOF
+import sys
+print(f"{sys.version_info.major}.{sys.version_info.minor}")
+EOF
+)
+    echo "✔ Found Python $PY_VER"
+    if [[ "$PY_VER" < "3.12" ]]; then
+        echo "Python >=3.12 is required."
+        INSTALL_PYTHON=true
+    else
+        INSTALL_PYTHON=false
+    fi
+fi
 
 cd "$HOME/PSC-project"
 ENV_NAME="pythonENV"
