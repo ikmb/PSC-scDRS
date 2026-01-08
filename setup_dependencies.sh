@@ -1,4 +1,3 @@
-### 1. Install Python dependencies
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -7,16 +6,13 @@ echo "   WESscDRS - ONE-TIME SETUP"
 echo "==========================================="
 echo
 
-set -e
-bash
-Copy code
 echo "Checking Python installation..."
 
 if ! command -v python3 >/dev/null 2>&1; then
     echo "Python is not installed."
     INSTALL_PYTHON=true
 else
-    PY_VER=$(python3 - <<EOF
+    PY_VER=$(python3 - <<'EOF'
 import sys
 print(f"{sys.version_info.major}.{sys.version_info.minor}")
 EOF
@@ -30,6 +26,9 @@ EOF
     fi
 fi
 
+# If you actually want to auto-install Python 3.12 here, add apt logic.
+# For now we keep your behavior: just detect and proceed.
+
 cd "$HOME/PSC-project"
 ENV_NAME="pythonENV"
 
@@ -41,21 +40,22 @@ else
 fi
 
 echo ">>> Activating environment"
+# shellcheck disable=SC1090
 source "$ENV_NAME/bin/activate"
-                   
-echo ">>> Installing Python dependencies from $REQ_FILE"
-pip install --upgrade pip
 
+# Requirements file: define BEFORE using it
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REQ_FILE="$SCRIPT_DIR/env/requirements.txt"
-echo ">>> Installing Python dependencies from $REQ_FILE"
 
+echo ">>> Installing Python dependencies from $REQ_FILE"
 if [ ! -f "$REQ_FILE" ]; then
-    echo "requirements.txt not found at $REQ_FILE"
+    echo "❌ requirements.txt not found at $REQ_FILE"
     exit 1
 fi
 
-pip install -r "$REQ_FILE"
+python3 -m pip install --upgrade pip
+python3 -m pip install -r "$REQ_FILE"
+
 echo
 echo ">>> Python environment ready."
 echo
@@ -76,31 +76,31 @@ fi
 echo ">>> Building bcftools (make)"
 make -C "$BCFTOOLS_DIR"
 
-echo ">>> Done. Binary is at: $REPO_DIR/$BCFTOOLS_DIR/bcftools"
+echo ">>> Done. Binary is at: $HOME/PSC-project/$BCFTOOLS_DIR/bcftools"
 
-### 3.  Download official dbSNP GRCh38 master catalog
+### 3. Download official dbSNP GRCh38 master catalog
 cd "$HOME/PSC-project"
 mkdir -p vcf
 cd vcf
 echo ">>> Installing dbSNP master rsID catalogue (GRCh38)"
 wget -nc https://ftp.ncbi.nlm.nih.gov/snp/organisms/human_9606_b151_GRCh38p7/VCF/00-All.vcf.gz
-wget -nc https://ftp.ncbi.nlm.nih.gov/snp/organisms/human_9606_b151_GRCh38p7/VCF/00-All.vcf.gz.tbi 
+wget -nc https://ftp.ncbi.nlm.nih.gov/snp/organisms/human_9606_b151_GRCh38p7/VCF/00-All.vcf.gz.tbi
 
 ### 4. Install MAGMA
 cd "$HOME/PSC-project"
 mkdir -p magma
 cd magma
+
 curl -L -o g1000_eur.zip \
   "https://vu.data.surf.nl/index.php/s/VZNByNwpD8qqINe/download?path=%2F&files=g1000_eur.zip"
-
 unzip -t g1000_eur.zip
 unzip -o g1000_eur.zip
 
 curl -L -o NCBI38.zip \
   "https://vu.data.surf.nl/index.php/s/yj952iHqy5anYhH/download?path=%2F&files=NCBI38.zip"
-
 unzip -t NCBI38.zip
 unzip -o NCBI38.zip
+
 echo
 echo "==========================================="
 echo "   ONE-TIME SETUP COMPLETED"
