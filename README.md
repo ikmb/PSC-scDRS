@@ -71,5 +71,5 @@ The single-cell RNA sequencing data from the healthy human liver in the study by
 The pipeline will run the code smoothly.
 ```bash
 cd "$HOME/PSC-project/PSC-scDRS"
-bash PSC-scDRS_run.sh
+bash PSC_scDRS_run.sh
 ```
