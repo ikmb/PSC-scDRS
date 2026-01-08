@@ -40,7 +40,7 @@ mkdir -p "$HOME/PSC-project"
 cd "$HOME/PSC-project"
 
 if [ -d "PSC-scDRS/.git" ]; then
-  echo "⚠ PSC-scDRS already exists."
+  echo "PSC-scDRS already exists."
   echo
   echo "Choose what you want to do:"
   echo "  [U] Update (git pull, keep your files)"
