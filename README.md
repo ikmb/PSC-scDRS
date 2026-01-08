@@ -37,44 +37,27 @@ All the codes and needed files for the sample file will be downloaded in this st
 mkdir -p "$HOME/PSC-project"
 ```
 
-2) Clone if missing, otherwise update or re-download
-```bash   
+2) Clone if missing,
+```bash
 cd "$HOME/PSC-project"
-
-if [ -d "PSC-scDRS/.git" ]; then
-  echo "PSC-scDRS already exists."
-  echo
-  echo "Choose what you want to do:"
-  echo "  [U] Update (git pull, keep your files)"
-  echo "  [R] Re-download (DELETE local repo and clone fresh)"
-  echo "  [A] Abort"
-
-  read -rp "Your choice [U/R/A]: " choice
-
-  case "$choice" in
-    U|u)
-      echo ">>> Updating existing repo"
-      cd PSC-scDRS
-      git pull --rebase
-      ;;
-    R|r)
-      echo ">>> Re-downloading repo (local PSC-scDRS will be deleted)"
-      rm -rf PSC-scDRS
-      git clone https://github.com/seirana/PSC-scDRS.git
-      cd PSC-scDRS
-      ;;
-    *)
-      echo "Aborted."
-      exit 0
-      ;;
-  esac
-else
-  echo ">>> Cloning repo"
-  git clone https://github.com/seirana/PSC-scDRS.git
-  cd PSC-scDRS
-fi
-
+git clone https://github.com/ikmb/PSC-scDRS.git
+cd PSC-scDRS
 ```
+
+or 3) update
+```bash
+cd "$HOME/PSC-project"
+git pull --rebase
+```
+
+or 4) re-download
+```bash
+rm -rf "$HOME/PSC-project/PSC-scDRS"
+cd "$HOME/PSC-project"
+git clone https://github.com/ikmb/PSC-scDRS.git
+cd PSC-scDRS
+```
+
 ## Installing dependencies
 PSC-scDRS needs some extra software to run:
 ### step 1: Install scDRS
