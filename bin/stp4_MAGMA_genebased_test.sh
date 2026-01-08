@@ -30,10 +30,10 @@ GENE_LOC="$MAGMA_DIR/NCBI38/NCBI38.gene.loc"
 BFILE="$MAGMA_DIR/g1000_eur/g1000_eur"
 
 # Safety checks (important)
-[ -f "$annot_file" ] || { echo "❌ Missing: $annot_file"; exit 1; }
-[ -f "$GENE_LOC" ] || { echo "❌ Missing: $GENE_LOC"; exit 1; }
-[ -f "$BFILE.bed" ] || { echo "❌ Missing: $BFILE.* (bed/bim/fam)"; exit 1; }
-[ -f "$step2_pval" ] || { echo "❌ Missing: $step2_pval"; exit 1; }
+[ -f "$annot_file" ] || { echo "Missing: $annot_file"; exit 1; }
+[ -f "$GENE_LOC" ] || { echo "Missing: $GENE_LOC"; exit 1; }
+[ -f "$BFILE.bed" ] || { echo "Missing: $BFILE.* (bed/bim/fam)"; exit 1; }
+[ -f "$step2_pval" ] || { echo "Missing: $step2_pval"; exit 1; }
 
 magma --annotate \
   --snp-loc "$annot_file" \
