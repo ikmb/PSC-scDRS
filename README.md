@@ -50,7 +50,7 @@ cd "$HOME/PSC-project"
 git pull --rebase
 ```
 
-or re-download
+otherwise re-download
 ```bash
 rm -rf "$HOME/PSC-project/PSC-scDRS"
 cd "$HOME/PSC-project"
