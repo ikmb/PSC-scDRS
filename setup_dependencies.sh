@@ -21,7 +21,7 @@ import sys
 print(f"{sys.version_info.major}.{sys.version_info.minor}")
 EOF
 )
-    echo "✔ Found Python $PY_VER"
+    echo "Found Python $PY_VER"
     if [[ "$PY_VER" < "3.12" ]]; then
         echo "Python >=3.12 is required."
         INSTALL_PYTHON=true
@@ -42,10 +42,19 @@ fi
 
 echo ">>> Activating environment"
 source "$ENV_NAME/bin/activate"
-                      
-REQ_FILE="$HOME/PSC-project/PSC-scDRS/env/requirements.txt"
+                   
 echo ">>> Installing Python dependencies from $REQ_FILE"
 pip install --upgrade pip
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REQ_FILE="$SCRIPT_DIR/env/requirements.txt"
+echo ">>> Installing Python dependencies from $REQ_FILE"
+
+if [ ! -f "$REQ_FILE" ]; then
+    echo "requirements.txt not found at $REQ_FILE"
+    exit 1
+fi
+
 pip install -r "$REQ_FILE"
 echo
 echo ">>> Python environment ready."
