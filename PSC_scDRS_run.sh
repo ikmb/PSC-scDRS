@@ -42,4 +42,4 @@ echo ">>> [7/7] stp7_scDRS_result_evaluation.py"
 python3 "$BIN_DIR/stp7_scDRS_result_evaluation.py"
 echo
 
-echo ">>> PIPELINE FINISHED SUCCESSFULLY ✅"
+echo ">>> PIPELINE FINISHED SUCCESSFULLY"
