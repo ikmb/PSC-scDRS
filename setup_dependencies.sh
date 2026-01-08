@@ -29,7 +29,7 @@ fi
 # If you actually want to auto-install Python 3.12 here, add apt logic.
 # For now we keep your behavior: just detect and proceed.
 
-cd "$HOME/PSC-project"
+cd "$HOME/PSC-project/PSC-scDRS"
 ENV_NAME="pythonENV"
 
 if [ ! -d "$ENV_NAME" ]; then
