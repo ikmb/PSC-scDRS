@@ -6,9 +6,9 @@
 This program generates a file in the desired format for the bcftools function.
 
 input: 
-    './PSC-project/PSC-scDRS/data/sample_single_marker_test.zip'
+    './PSC-scDRS/data/sample_single_marker_test.zip'
 output:
-    ./PSC-project/PSC-scDRS/output/bcf_variants.vcf'
+    ./PSC-scDRS/output/bcf_variants.vcf'
 """
 
 import pandas as pd
