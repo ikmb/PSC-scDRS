@@ -14,7 +14,7 @@ output:
 import pandas as pd
 from pathlib import Path
 
-in_dir = Path.home() /"PSC-project"/"PSC-scDRS"
+in_dir = Path.home()/"PSC-scDRS"
 
 file = in_dir /"data/sampleWES.zip"
 reg = pd.read_csv(
