@@ -6,23 +6,23 @@
 This program generates files needed for the MAGMA gene-based test.
 
 input:
-    ./PSC-project/PSC-scDRS/output/variants_with_rsID.vcf 
-    ./PSC-project/PSC-scDRS/data/sample_single_marker_test.zip
+    ./PSC-scDRS/output/variants_with_rsID.vcf 
+    ./PSC-scDRS/data/sample_single_marker_test.zip
 output:
-    ./PSC-project/PSC-scDRS/output/files_for_step2.txt
-    ./PSC-project/PSC-scDRS/output/files_for_MAGMA.txt
+    ./PSC-scDRS/output/files_for_step2.txt
+    ./PSC-scDRS/output/files_for_MAGMA.txt
 """
 
 import sys
 from pathlib import Path
-sys.path.append(str(Path.home() / "PSC-project" / "PSC-scDRS" / "bin"))
+sys.path.append(str(Path.home()/"PSC-scDRS"/"bin"))
 import read_write as rw
 import pandas as pd
 import sys
 
 
-in_dir = Path.home() /"PSC-project"/"PSC-scDRS"/"output"
-vcf_file =  in_dir / "variants_with_rsID.vcf"
+in_dir = Path.home()/"PSC-scDRS"/"output"
+vcf_file =  in_dir/"variants_with_rsID.vcf"
 
 header_line_idx = None
 header_cols = None
@@ -45,13 +45,13 @@ vcf = pd.read_csv(
 data_for_MAGMA = vcf.loc[:, ['ID', 'CHROM', 'POS']].copy()
 data_for_MAGMA.columns = ['Variant name', 'CHROM', 'GENPOS']
 
-out_dir = Path.home() /"PSC-project"/"PSC-scDRS"/"output"
-file = str(out_dir / "files_for_MAGMA")
+out_dir = Path.home()/"PSC-scDRS"/"output"
+file = str(out_dir/"files_for_MAGMA")
 rw.write_txt(file, data_for_MAGMA, ' ', False)
 
 # .............................................................................
-in_dir = Path.home() /"PSC-project"/"PSC-scDRS"/"data"
-file =  in_dir / "sampleWES.zip"
+in_dir = Path.home()/"PSC-scDRS"/"data"
+file =  in_dir/"sampleWES.zip"
 df = pd.read_csv(
     file,
     sep=r"\s+",
@@ -62,7 +62,7 @@ data_for_step2 = df.loc[:, ['MarkerID', 'p.value']].copy()
 data_for_step2.loc[:, 'MarkerID'] = vcf.loc[:, 'ID']
 data_for_step2.columns = ['SNP id', 'p-value']
 
-out_dir = Path.home() / "PSC-project" / "PSC-scDRS" / "output"
+out_dir = Path.home() /  "PSC-scDRS" / "output"
 out_dir.mkdir(parents=True, exist_ok=True)
 
 file = str(out_dir /"files_for_step2")
