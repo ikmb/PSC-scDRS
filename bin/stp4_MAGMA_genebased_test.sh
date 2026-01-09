@@ -2,12 +2,12 @@
 # This program applies MAGMA gene-based test on data
 # input:
 #	N=5023 equal to the all samples in the study, cases and controls
-#	"$HOME/PSC-project/PSC-scDRS/output/files_for_MAGMA.txt"
-#	"$HOME/PSC-project/PSC-scDRS/output/files_for_step2.txt"
-#	"$HOME/PSC-project/PSC-scDRS/output/files_step1.genes.annot"
+#	"$HOME/PSC-scDRS/output/files_for_MAGMA.txt"
+#	"$HOME/PSC-scDRS/output/files_for_step2.txt"
+#	"$HOME/PSC-scDRS/output/files_step1.genes.annot"
 # output:
-#	"$HOME/PSC-project/PSC-scDRS/output/files_step1"
-#	"$HOME/PSC-project/PSC-scDRS/output/files_step2"
+#	"$HOME/PSC-scDRS/output/files_step1"
+#	"$HOME/PSC-scDRS/output/files_step2"
 #==============================================================================================================
 #!/bin/bash
 
