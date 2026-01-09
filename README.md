@@ -42,6 +42,8 @@ mkdir -p "$HOME"
 cd "$HOME"
 git clone https://github.com/ikmb/PSC-scDRS.git
 cd PSC-scDRS
+wget -O "$HOME/PSC-scDRS/data/HumanLiverHealthyscRNAseqData.zip" \
+"https://github.com/seirana/PSC-scDRS/blob/main/data/HumanLiverHealthyscRNAseqData.zip?raw=1"
 ```
 
 or re-download
@@ -50,6 +52,8 @@ rm -rf "$HOME/PSC-scDRS"
 cd "$HOME"
 git clone https://github.com/ikmb/PSC-scDRS.git
 cd PSC-scDRS
+wget -O "$HOME/PSC-scDRS/data/HumanLiverHealthyscRNAseqData.zip" \
+"https://github.com/seirana/PSC-scDRS/blob/main/data/HumanLiverHealthyscRNAseqData.zip?raw=1"
 ```
 
 ## Installing dependencies
