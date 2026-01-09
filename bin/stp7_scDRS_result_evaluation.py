@@ -12,17 +12,17 @@ input:
     min_cell_count = 150
     up_threshold = 5
     factor = 100
-    ./PSC-project/PSC-scDRS/output/{trait}.scdrs_group.cell_ontology_class
+    ./PSC-scDRS/output/{trait}.scdrs_group.cell_ontology_class
     
 output:
-    ./PSC-project/PSC-scDRS/output/log_threshod.png
-    ./PSC-project/PSC-scDRS/output/{trait}_cell assiciation with_{tissue}
+    ./PSC-scDRS/output/log_threshod.png
+    ./PSC-scDRS/output/{trait}_cell assiciation with_{tissue}
 """
 
 
 import sys
 from pathlib import Path
-sys.path.append(str(Path.home() / "PSC-project" / "PSC-scDRS" / "bin"))
+sys.path.append(str(Path.home() / "PSC-scDRS" / "bin"))
 
 from sympy import symbols, Eq, log, solve
 import matplotlib.pyplot as plt
@@ -117,7 +117,7 @@ def floatTOnumber(db):
 
 
 if __name__ == "__main__":
-    out_dirc = Path.home() / "PSC-project" / "PSC-scDRS" / "output"
+    out_dirc = Path.home() / "PSC-scDRS" / "output"
     a,b = log_threshold(out_dirc)
     columns = ["tissue", "trait", "cell", "n cell","assoc.", "hetero.", "percentage of associated cells with fdr. 0.05", "threshold", "significancy"]
     
