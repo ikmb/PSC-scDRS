@@ -1,10 +1,10 @@
 #========================================================================
 #input:
-# 	"$HOME/PSC-project/PSC-scDRS/output/bcf_variants.vcf
-#	"$HOME/PSC-project/00-All.vcf.gz
+# 	"$HOME/PSC-scDRS/output/bcf_variants.vcf
+#	"$HOME/00-All.vcf.gz
 # output:
-#	"$HOME/PSC-project/PSC-scDRS/output/bcf_variants.vcf.gz
-#	"$HOME/PSC-project/PSC-scDRS/output/variants_with_rsID.vcf
+#	"$HOME/PSC-scDRS/output/bcf_variants.vcf.gz
+#	"$HOME/PSC-scDRS/output/variants_with_rsID.vcf
 #========================================================================
 ##!/bin/bash
 
@@ -20,7 +20,7 @@ output_vcf="$REPO_DIR/output/bcf_variants.vcf.gz"
 annotated_vcf="$REPO_DIR/output/variants_with_rsID.vcf"
 
 DBSNP_VCF="$REPO_DIR/vcf/00-All.vcf.gz"    # if you store dbSNP inside repo/vcf
-# If you store dbSNP outside repo (e.g. ~/PSC-project/vcf), point to it explicitly.
+# If you store dbSNP outside repo (e.g. ~/vcf), point to it explicitly.
 
 if [ ! -f "$input_vcf" ]; then
   echo "File does not exist: $input_vcf"
