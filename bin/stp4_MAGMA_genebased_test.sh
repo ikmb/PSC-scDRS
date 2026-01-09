@@ -26,7 +26,7 @@ step2_pval="$OUT_DIR/files_for_step2.txt"
 step1_genes_annot="$OUT_DIR/files_step1.genes.annot"
 step2_out="$OUT_DIR/files_step2"
 
-GENE_LOC="$MAGMA_DIR/NCBI38/NCBI38.gene.loc"
+GENE_LOC="$MAGMA_DIR/NCBI38.gene.loc"
 BFILE="$MAGMA_DIR/g1000_eur/g1000_eur"
 
 # Safety checks (important)
