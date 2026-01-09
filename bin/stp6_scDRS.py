@@ -6,16 +6,16 @@
 This function runs scDRS across the desired traits and tissues.
 
 input:
-    ./PSC-project/PSC-scDRS/data/{tissue}.h5ad
-    ./PSC-project/PSC-scDRS/output/{trait}_geneset.gs
+    ./PSC-scDRS/data/{tissue}.h5ad
+    ./PSC-scDRS/output/{trait}_geneset.gs
     
 output:
-    ./PSC-project/PSC-scDRS/output/{tissue}_cov.tsv
-    ./PSC-project/PSC-scDRS/output/{tissue}_{trait}.full_score.gz
-    ./PSC-project/PSC-scDRS/output/{tissue}_{trait}.score.gz
-    ./PSC-project/PSC-scDRS/output/{tissue}_{trait}.scdrs_group.cell_ontology_class
-    ./PSC-project/PSC-scDRS/bin/figures/cell_ontology_classes_{tissue}.png
-    ./PSC-project/PSC-scDRS/bin/figures/associated_cells_of_{tissue}_to_{geneset}.png
+    ./PSC-scDRS/output/{tissue}_cov.tsv
+    ./PSC-scDRS/output/{tissue}_{trait}.full_score.gz
+    ./PSC-scDRS/output/{tissue}_{trait}.score.gz
+    ./PSC-scDRS/output/{tissue}_{trait}.scdrs_group.cell_ontology_class
+    ./PSC-scDRS/bin/figures/cell_ontology_classes_{tissue}.png
+    ./PSC-scDRS/bin/figures/associated_cells_of_{tissue}_to_{geneset}.png
 """
 
 from pathlib import Path
@@ -35,8 +35,8 @@ tissue = "Liver"
 
 hm = 'hsapiens'
 
-data_dirc = Path.home() / "PSC-project" / "PSC-scDRS" / "data"
-out_dirc = Path.home() / "PSC-project" / "PSC-scDRS" / "output"
+data_dirc = Path.home() /"PSC-scDRS" / "data"
+out_dirc = Path.home() / "PSC-scDRS" / "output"
 
 zip_path = data_dirc / "HumanLiverHealthyscRNAseqData.zip"
 target_path = data_dirc / "Liver.h5ad"
