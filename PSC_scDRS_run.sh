@@ -13,8 +13,8 @@ python3 "$BIN_DIR/stp1_generate_input_file_for_BCFtools.py"
 echo
 
 ### === STEP 2: Bash ===
-echo ">>> [2/7] stp2_generate_rsIDs_with_BCFtools"
-bash "$BIN_DIR/stp2_generate_rsIDs_with_BCFtools"
+echo ">>> [2/7] stp2_generate_rsIDs_with_BCFtools.sh"
+bash "$BIN_DIR/stp2_generate_rsIDs_with_BCFtools.sh"
 echo
 
 ### === STEP 3: Python ===
