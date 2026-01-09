@@ -44,13 +44,7 @@ git clone https://github.com/ikmb/PSC-scDRS.git
 cd PSC-scDRS
 ```
 
-or update,
-```bash
-cd "$HOME"
-git pull --rebase
-```
-
-otherwise re-download
+or re-download
 ```bash
 rm -rf "$HOME/PSC-scDRS"
 cd "$HOME"
