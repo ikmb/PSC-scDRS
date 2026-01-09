@@ -34,26 +34,26 @@ All the codes and needed files for the sample file will be downloaded in this st
 
 1) Create a workspace to keep data and files for the PSC-scDRS project.
 ```bash   
-mkdir -p "$HOME/PSC-project"
+mkdir -p "$HOME"
 ```
 
 2) Clone if missing,
 ```bash
-cd "$HOME/PSC-project"
+cd "$HOME"
 git clone https://github.com/ikmb/PSC-scDRS.git
 cd PSC-scDRS
 ```
 
 or update,
 ```bash
-cd "$HOME/PSC-project"
+cd "$HOME"
 git pull --rebase
 ```
 
 otherwise re-download
 ```bash
-rm -rf "$HOME/PSC-project/PSC-scDRS"
-cd "$HOME/PSC-project"
+rm -rf "$HOME/PSC-scDRS"
+cd "$HOME"
 git clone https://github.com/ikmb/PSC-scDRS.git
 cd PSC-scDRS
 ```
@@ -69,7 +69,7 @@ Pipeline will install it. If there is a problem, check [here](https://cncr.nl/re
 
 #### This command installs Python libraries, scDRS, bcftools, and MAGMA.
 ```bash
-cd "$HOME/PSC-project/PSC-scDRS"
+cd "$HOME/PSC-scDRS"
 bash setup_dependencies.sh
 ```
 ## Data
@@ -79,6 +79,6 @@ The single-cell RNA sequencing data from the healthy human liver in the study by
 ## Running PSC-scDRS
 The pipeline will run the code smoothly.
 ```bash
-cd "$HOME/PSC-project/PSC-scDRS"
+cd "$HOME/PSC-scDRS"
 bash PSC_scDRS_run.sh
 ```
