@@ -38,7 +38,7 @@ bcf = pd.DataFrame({
     "INFO": "."
 })
 
-out_dir = Path.home() / "PSC-project" / "PSC-scDRS" / "output"
+out_dir = Path.home()/"PSC-scDRS"/"output"
 out_dir.mkdir(parents=True, exist_ok=True)
 
 
