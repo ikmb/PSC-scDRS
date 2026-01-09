@@ -10,14 +10,14 @@ This program
  4. makes a list of genes with a significant p-value.
 
 input:
-    ./PSC-project/PSC-scDRS/output/files_step2.genes.out
-    ./PSC-project/PSC-scDRS/data/magma_10kb_top1000_zscore.74_traits.rv1.gs
+    ./PSC-scDRS/output/files_step2.genes.out
+    ./PSC-scDRS/data/magma_10kb_top1000_zscore.74_traits.rv1.gs
     
 output:  
-    ./PSC-project/PSC-scDRS/output/zscore.csv
-    ./PSC-project/PSC-scDRS/output/PSC_geneset.gs
-    ./PSC-project/PSC-scDRS/output/gene_based_test.png
-    ./PSC-project/PSC-scDRS/output/significant_genes_MAGMA.csv
+    ./PSC-scDRS/output/zscore.csv
+    ./PSC-scDRS/output/PSC_geneset.gs
+    ./PSC-scDRS/output/gene_based_test.png
+    ./PSC-scDRS/output/significant_genes_MAGMA.csv
 """
 
 import matplotlib.pyplot as plt
@@ -66,7 +66,7 @@ def entrez_to_symbol(entrez_ids, batch_size=1000):
 if __name__ == '__main__':
 
     # Output directory
-    dirc = Path.home() / "PSC-project" / "PSC-scDRS" / "output"
+    dirc = Path.home() / "PSC-scDRS" / "output"
 
     file = dirc / "files_step2.genes.out"
     df = pd.read_csv(file, sep=r"\s+")
@@ -93,7 +93,7 @@ if __name__ == '__main__':
 
     #..........................................................................
     # make geneset fine
-    dirc = Path.home() /"PSC-project"/"PSC-scDRS"/"data"
+    dirc = Path.home() /"PSC-scDRS"/"data"
     file = str(dirc/"magma_10kb_top1000_zscore.74_traits.rv1.gs")
     cntrl = pd.read_csv(file, sep="\t")
     geneset = cntrl.loc[[0], :]
@@ -103,14 +103,14 @@ if __name__ == '__main__':
     df = df.loc[:, ['gene_symbol', 'ZSTAT']]
     geneset.loc[0, 'GENESET'] = list_maker(df)
 
-    dirc = Path.home() /"PSC-project"/"PSC-scDRS"/"output"
+    dirc = Path.home() /"PSC-scDRS"/"output"
     dirc.mkdir(parents=True, exist_ok=True)
     write_file = str(dirc/"PSC_geneset.gs")
     geneset.to_csv(write_file, sep="\t", index=False)
     
     # .........................................................................
     # build Manhattan plo
-    dirc = Path.home() /"PSC-project"/"PSC-scDRS"/"output"
+    dirc = Path.home() /"PSC-scDRS"/"output"
     file = str(dirc / "files_step2.genes.out")
     df = pd.read_csv(file, sep=r'\s+')
     df = df.loc[:, ['CHR', 'P']]
@@ -147,14 +147,14 @@ if __name__ == '__main__':
     plt.title('MAGMA gene-based test', fontsize=16, fontweight='bold', loc='center', pad=20)
     
     # show the graph
-    dirc = Path.home() /"PSC-project"/"PSC-scDRS"/"output"
+    dirc = Path.home() /"PSC-scDRS"/"output"
     plt.savefig(str(dirc / "gene_based_test.png"))
     plt.show()
     # .........................................................................
     # make list of significant genes
     data = pd.DataFrame()
     
-    dirc = Path.home() /"PSC-project"/"PSC-scDRS"/"output"
+    dirc = Path.home() /"PSC-scDRS"/"output"
     file = str(dirc/"zscore.csv")
     df = pd.read_csv(file, sep=',')
     val_genes = df.loc[df['P'] <= 2.5*1e-6, ['gene_symbol', 'CHR', 'P']]
