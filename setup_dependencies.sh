@@ -6,6 +6,18 @@ echo "   PSC-scDRS - ONE-TIME SETUP"
 echo "==========================================="
 echo
 
+# --------------------------
+# 0) Basic tool checks
+# --------------------------
+for cmd in git make gcc wget curl unzip; do
+  if ! command -v "$cmd" >/dev/null 2>&1; then
+    echo "Missing required command: $cmd"
+    echo "On Ubuntu/Debian, install with:"
+    echo "  sudo apt update && sudo apt install -y git build-essential wget curl unzip"
+    exit 1
+  fi
+done
+
 echo "Checking Python installation..."
 
 if ! command -v python3 >/dev/null 2>&1; then
@@ -87,7 +99,12 @@ else
 fi
 
 echo ">>> Building htslib (provides bgzip/tabix)"
-make -C "$HTSLIB_PATH"
+if ! make -C "$HTSLIB_PATH"; then
+  echo "htslib build failed."
+  echo "On Ubuntu/Debian you may need:"
+  echo "  sudo apt install -y libcurl4-openssl-dev libbz2-dev liblzma-dev"
+  exit 1
+fi
 
 # bcftools
 if [ ! -d "$BCFTOOLS_PATH/.git" ]; then
@@ -108,12 +125,12 @@ export PATH="$HTSLIB_PATH:$BCFTOOLS_PATH:$PATH"
 
 echo
 echo ">>> Tool availability check"
-command -v bgzip >/dev/null 2>&1 || { echo "❌ bgzip not found in PATH after build"; exit 1; }
-command -v bcftools >/dev/null 2>&1 || { echo "❌ bcftools not found in PATH after build"; exit 1; }
-echo "bgzip:   $(command -v bgzip)"
+command -v bgzip >/dev/null 2>&1 || { echo "bgzip not found in PATH after build"; exit 1; }
+command -v bcftools >/dev/null 2>&1 || { echo "bcftools not found in PATH after build"; exit 1; }
+echo "bgzip:    $(command -v bgzip)"
 echo "bcftools: $(command -v bcftools)"
 echo
-echo ">>> If you want these tools available in new terminals, add this line to your shell rc (e.g. ~/.bashrc):"
+echo ">>> For new terminals, add to ~/.bashrc:"
 echo "export PATH=\"$HTSLIB_PATH:$BCFTOOLS_PATH:\$PATH\""
 echo
 
@@ -141,14 +158,48 @@ curl -L -o g1000_eur.zip \
   "https://vu.data.surf.nl/index.php/s/VZNByNwpD8qqINe/download?path=%2F&files=g1000_eur.zip"
 unzip -t g1000_eur.zip
 unzip -o g1000_eur.zip
+rm -f g1000_eur.zip
 
 curl -L -o NCBI38.zip \
   "https://vu.data.surf.nl/index.php/s/yj952iHqy5anYhH/download?path=%2F&files=NCBI38.zip"
 unzip -t NCBI38.zip
 unzip -o NCBI38.zip
+rm -f NCBI38.zip
+
+# --------------------------
+# 4b) Install MAGMA binary (if missing)
+# --------------------------
+MAGMA_BIN_DIR="$SCRIPT_DIR/tools/magma"
+mkdir -p "$MAGMA_BIN_DIR"
+
+if command -v magma >/dev/null 2>&1; then
+  echo ">>> MAGMA already available: $(command -v magma)"
+else
+  echo ">>> MAGMA not found in PATH. Downloading MAGMA binary..."
+  MAGMA_ZIP="$MAGMA_BIN_DIR/magma_v1.10.zip"
+  curl -L -o "$MAGMA_ZIP" "https://vu.data.surf.nl/index.php/s/zkKbNeNOZAhFXZB/download"
+  unzip -o "$MAGMA_ZIP" -d "$MAGMA_BIN_DIR"
+  rm -f "$MAGMA_ZIP"
+
+  MAGMA_EXE="$(find "$MAGMA_BIN_DIR" -maxdepth 4 -type f -name magma -perm -111 | head -n 1 || true)"
+  if [ -z "$MAGMA_EXE" ]; then
+    echo "MAGMA binary not found after unzip. Check contents of $MAGMA_BIN_DIR"
+    exit 1
+  fi
+
+  chmod +x "$MAGMA_EXE"
+  export PATH="$(dirname "$MAGMA_EXE"):$PATH"
+  echo ">>> MAGMA installed at: $MAGMA_EXE"
+fi
+
+command -v magma >/dev/null 2>&1 || { echo "MAGMA still not available in PATH"; exit 1; }
+echo "MAGMA version: $(magma --version 2>/dev/null | head -n 1 || true)"
+echo
+echo ">>> For new terminals, add to ~/.bashrc (if you installed MAGMA via this script):"
+echo "export PATH=\"$SCRIPT_DIR/tools/magma:\$PATH\""
+echo
 
 cd "$SCRIPT_DIR"
-echo
 echo "==========================================="
 echo "   ONE-TIME SETUP COMPLETED"
 echo "==========================================="
