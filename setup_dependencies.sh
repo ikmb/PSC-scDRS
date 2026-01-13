@@ -9,7 +9,7 @@ echo
 echo "Checking Python installation..."
 
 if ! command -v python3 >/dev/null 2>&1; then
-  echo "❌ Python is not installed (python3 not found)."
+  echo "Python is not installed (python3 not found)."
   echo "Install Python 3.12 (and python3.12-venv) and re-run."
   exit 1
 fi
@@ -22,7 +22,7 @@ EOF
 echo "Found Python $PY_VER"
 
 if [[ "$PY_VER" < "3.12" ]]; then
-  echo "❌ Python >=3.12 is required."
+  echo "Python >=3.12 is required."
   exit 1
 fi
 
@@ -44,7 +44,7 @@ else
 fi
 
 if [ ! -f "$VENV_PATH/bin/activate" ]; then
-  echo "❌ Virtual environment activation script not found: $VENV_PATH/bin/activate"
+  echo "Virtual environment activation script not found: $VENV_PATH/bin/activate"
   echo "Try removing $VENV_PATH and re-running setup_dependencies.sh"
   exit 1
 fi
@@ -57,7 +57,7 @@ REQ_FILE="$SCRIPT_DIR/env/requirements.txt"
 echo ">>> Installing Python dependencies from $REQ_FILE"
 
 if [ ! -f "$REQ_FILE" ]; then
-  echo "❌ requirements.txt not found at $REQ_FILE"
+  echo "requirements.txt not found at $REQ_FILE"
   exit 1
 fi
 
@@ -110,8 +110,8 @@ echo
 echo ">>> Tool availability check"
 command -v bgzip >/dev/null 2>&1 || { echo "❌ bgzip not found in PATH after build"; exit 1; }
 command -v bcftools >/dev/null 2>&1 || { echo "❌ bcftools not found in PATH after build"; exit 1; }
-echo "✅ bgzip:   $(command -v bgzip)"
-echo "✅ bcftools: $(command -v bcftools)"
+echo "bgzip:   $(command -v bgzip)"
+echo "bcftools: $(command -v bcftools)"
 echo
 echo ">>> If you want these tools available in new terminals, add this line to your shell rc (e.g. ~/.bashrc):"
 echo "export PATH=\"$HTSLIB_PATH:$BCFTOOLS_PATH:\$PATH\""
