@@ -148,81 +148,103 @@ cd "$SCRIPT_DIR"
 echo
 
 # --------------------------
-# 4) Install MAGMA resources
+# 4) MAGMA (binary + reference data)
 # --------------------------
-MAGMA_REF_DIR="$SCRIPT_DIR/magma"
-mkdir -p "$MAGMA_REF_DIR"
-cd "$MAGMA_REF_DIR"
+MAGMA_DIR="$SCRIPT_DIR/magma"
+mkdir -p "$MAGMA_DIR"
+cd "$MAGMA_DIR" || { echo "ERROR: cannot cd to $MAGMA_DIR"; exit 1; }
 
-echo ">>> Downloading MAGMA reference data (1000G EUR + NCBI38 gene locations)"
+echo ">>> Setting up MAGMA in: $MAGMA_DIR"
+echo ">>> (cwd) $(pwd)"
 
-# 1000G EUR reference panel
-if [[ ! -f "g1000_eur.bed" || ! -f "g1000_eur.bim" || ! -f "g1000_eur.fam" ]]; then
-  curl -L -o g1000_eur.zip \
-    "https://vu.data.surf.nl/index.php/s/VZNByNwpD8qqINe/download?path=%2F&files=g1000_eur.zip"
-  unzip -t g1000_eur.zip
-  unzip -o g1000_eur.zip
-  rm -f g1000_eur.zip
-else
-  echo ">>> Reference panel already present: $MAGMA_REF_DIR/g1000_eur.{bed,bim,fam}"
-fi
+# Helper: download -> test -> unzip -> cleanup (all with absolute paths)
+download_and_unzip() {
+  local url="$1"
+  local zip_path="$2"
+  local out_dir="$3"
 
-# NCBI38 gene location file (GRCh38/hg38)
-if [[ ! -f "NCBI38.gene.loc" ]]; then
-  curl -L -o NCBI38.zip \
-    "https://vu.data.surf.nl/index.php/s/yj952iHqy5anYhH/download?path=%2F&files=NCBI38.zip"
-  unzip -t NCBI38.zip
-  unzip -o NCBI38.zip
-  rm -f NCBI38.zip
-else
-  echo ">>> Gene location file already present: $MAGMA_REF_DIR/NCBI38.gene.loc"
-fi
+  echo ">>> Downloading: $zip_path"
+  curl -L --fail -o "$zip_path" "$url"
 
-# Hard fail if key resources are missing
-[[ -f "$MAGMA_REF_DIR/NCBI38.gene.loc" ]] || { echo "ERROR: Missing $MAGMA_REF_DIR/NCBI38.gene.loc"; exit 1; }
-[[ -f "$MAGMA_REF_DIR/g1000_eur.bed" && -f "$MAGMA_REF_DIR/g1000_eur.bim" && -f "$MAGMA_REF_DIR/g1000_eur.fam" ]] || {
-  echo "ERROR: Missing one of g1000_eur.{bed,bim,fam} in $MAGMA_REF_DIR"
-  exit 1
+  echo ">>> Testing zip integrity: $zip_path"
+  unzip -t "$zip_path" >/dev/null
+
+  echo ">>> Extracting to: $out_dir"
+  unzip -o "$zip_path" -d "$out_dir" >/dev/null
+
+  rm -f "$zip_path"
 }
 
-# --------------------------
-# 4b) Install MAGMA binary (repo-local, reproducible)
-# --------------------------
-MAGMA_BIN_DIR="$SCRIPT_DIR/tools/magma"
-mkdir -p "$MAGMA_BIN_DIR"
-
-# If magma already exists in this repo, do nothing; otherwise download it.
-MAGMA_EXE="$(find "$MAGMA_BIN_DIR" -maxdepth 4 -type f -name magma -perm -111 | head -n 1 || true)"
-if [[ -z "$MAGMA_EXE" ]]; then
-  echo ">>> Installing MAGMA binary into repo: $MAGMA_BIN_DIR"
-  MAGMA_ZIP="$MAGMA_BIN_DIR/magma_v1.10.zip"
-  curl -L -o "$MAGMA_ZIP" "https://vu.data.surf.nl/index.php/s/zkKbNeNOZAhFXZB/download"
-  unzip -o "$MAGMA_ZIP" -d "$MAGMA_BIN_DIR"
-  rm -f "$MAGMA_ZIP"
-
-  MAGMA_EXE="$(find "$MAGMA_BIN_DIR" -maxdepth 4 -type f -name magma -perm -111 | head -n 1 || true)"
-  [[ -n "$MAGMA_EXE" ]] || { echo "ERROR: MAGMA binary not found after unzip in $MAGMA_BIN_DIR"; exit 1; }
-  chmod +x "$MAGMA_EXE"
+# 4a) 1000G EUR reference panel (LD reference for MAGMA)
+if [[ ! -f "$MAGMA_DIR/g1000_eur.bed" || ! -f "$MAGMA_DIR/g1000_eur.bim" || ! -f "$MAGMA_DIR/g1000_eur.fam" ]]; then
+  echo ">>> Downloading 1000G EUR reference panel"
+  download_and_unzip \
+    "https://vu.data.surf.nl/index.php/s/VZNByNwpD8qqINe/download?path=%2F&files=g1000_eur.zip" \
+    "$MAGMA_DIR/g1000_eur.zip" \
+    "$MAGMA_DIR"
 else
-  echo ">>> Repo-local MAGMA already present: $MAGMA_EXE"
+  echo ">>> 1000G EUR reference already present"
 fi
 
-# IMPORTANT: prefer repo-local magma over any system-installed magma
-export PATH="$(dirname "$MAGMA_EXE"):$PATH"
+# 4b) Gene locations (GRCh38 / hg38)
+if [[ ! -f "$MAGMA_DIR/NCBI38.gene.loc" ]]; then
+  echo ">>> Downloading NCBI38 gene locations"
+  download_and_unzip \
+    "https://vu.data.surf.nl/index.php/s/yj952iHqy5anYhH/download?path=%2F&files=NCBI38.zip" \
+    "$MAGMA_DIR/NCBI38.zip" \
+    "$MAGMA_DIR"
+else
+  echo ">>> NCBI38.gene.loc already present"
+fi
+
+# 4c) MAGMA binary (repo-local)
+# Guard against previous bad state where "magma" is a directory
+if [[ -d "$MAGMA_DIR/magma" ]]; then
+  echo ">>> WARNING: $MAGMA_DIR/magma is a directory (should be a binary). Removing it."
+  rm -rf "$MAGMA_DIR/magma"
+fi
+
+if [[ ! -f "$MAGMA_DIR/magma" ]]; then
+  echo ">>> Downloading MAGMA binary"
+  download_and_unzip \
+    "https://vu.data.surf.nl/index.php/s/zkKbNeNOZAhFXZB/download" \
+    "$MAGMA_DIR/magma_v1.10.zip" \
+    "$MAGMA_DIR"
+fi
+
+# Ensure executable bit is set
+chmod +x "$MAGMA_DIR/magma" 2>/dev/null || true
+
+# Validate MAGMA binary exists
+if [[ ! -f "$MAGMA_DIR/magma" ]]; then
+  echo "ERROR: MAGMA binary not found at $MAGMA_DIR/magma"
+  echo "       Contents of $MAGMA_DIR:"
+  ls -la "$MAGMA_DIR" | head -n 80
+  exit 1
+fi
+
+# Force pipeline to use repo-local MAGMA (prefer over /usr/local/bin/magma)
+export PATH="$MAGMA_DIR:$PATH"
 hash -r
 
-command -v magma >/dev/null 2>&1 || { echo "ERROR: MAGMA not available in PATH"; exit 1; }
+command -v magma >/dev/null 2>&1 || { echo "ERROR: magma not available in PATH"; exit 1; }
 
 echo ">>> Using MAGMA: $(command -v magma)"
 echo ">>> MAGMA version: $(magma --version 2>/dev/null | head -n 1 || true)"
-echo
-echo ">>> For new terminals, optionally add to ~/.bashrc:"
-echo "export PATH=\"$(dirname "$MAGMA_EXE"):\$PATH\""
-echo
-echo ">>> MAGMA refs:"
-echo "  - LD ref prefix: $MAGMA_REF_DIR/g1000_eur"
-echo "  - Gene loc file: $MAGMA_REF_DIR/NCBI38.gene.loc"
 
+# Sanity checks for required MAGMA resources
+[[ -f "$MAGMA_DIR/NCBI38.gene.loc" ]] || { echo "ERROR: Missing $MAGMA_DIR/NCBI38.gene.loc"; exit 1; }
+[[ -f "$MAGMA_DIR/g1000_eur.bed" && -f "$MAGMA_DIR/g1000_eur.bim" && -f "$MAGMA_DIR/g1000_eur.fam" ]] || {
+  echo "ERROR: Missing one of g1000_eur.{bed,bim,fam} in $MAGMA_DIR"
+  exit 1
+}
+
+echo ">>> MAGMA ready"
+echo ">>> LD reference prefix: $MAGMA_DIR/g1000_eur"
+echo ">>> Gene location file:  $MAGMA_DIR/NCBI38.gene.loc"
+echo
+
+# Return to repo root for subsequent steps
 cd "$SCRIPT_DIR"
 echo "==========================================="
 echo "   ONE-TIME SETUP COMPLETED"
