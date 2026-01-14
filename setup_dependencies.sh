@@ -171,8 +171,6 @@ download_and_unzip() {
 
   echo ">>> Extracting to: $out_dir"
   unzip -o "$zip_path" -d "$out_dir" >/dev/null
-
-  rm -f "$zip_path"
 }
 
 # 4a) 1000G EUR reference panel (LD reference for MAGMA)
