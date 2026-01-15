@@ -1,10 +1,10 @@
 #========================================================================
 #input:
-#   ./PSC-scDRS/output/bcf_variants.vcf
-#	  ./00-All.vcf.gz
+#  <repo>/PSC-scDRS/output/bcf_variants.vcf
+#  <repo>/00-All.vcf.gz
 # output:
-#	  ./PSC-scDRS/output/bcf_variants.vcf.gz
-#  	./PSC-scDRS/output/variants_with_rsID.vcf
+#  <repo>/PSC-scDRS/output/bcf_variants.vcf.gz
+#  <repo>/PSC-scDRS/output/variants_with_rsID.vcf
 #========================================================================
 #!/usr/bin/env bash
 set -euo pipefail
