@@ -75,7 +75,10 @@ Pipeline will install it. If there is a problem, check [here](https://cncr.nl/re
 
 #### This command installs Python libraries, scDRS, bcftools, and MAGMA.
 ```bash
-cd PSC-scDRS
+cd ~
+REPO_DIR="$(find . -maxdepth 5 -type f -name setup_dependencies.sh -path '*/PSC-scDRS/*' -print -quit | xargs -r dirname)"
+echo "$REPO_DIR"
+cd "$REPO_DIR"
 bash setup_dependencies.sh
 
 ```
@@ -86,7 +89,10 @@ The single-cell RNA sequencing data from the healthy human liver in the study by
 ## Running PSC-scDRS
 The pipeline will run the code smoothly.
 ```bash
-cd PSC-scDRS
+cd ~
+REPO_DIR="$(find . -maxdepth 5 -type f -name setup_dependencies.sh -path '*/PSC-scDRS/*' -print -quit | xargs -r dirname)"
+echo "$REPO_DIR"
+cd "$REPO_DIR"
 bash PSC_scDRS_run.sh
 ```
 
