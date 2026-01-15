@@ -86,3 +86,5 @@ The pipeline will run the code smoothly.
 cd "$HOME/PSC-scDRS"
 bash PSC_scDRS_run.sh
 ```
+
+THe final results are stored as <repo>/PSC-cdDRS/output/PSC_cell assiciation with_Liver.csv
