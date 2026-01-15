@@ -1,38 +1,34 @@
-#========================================================================
-#input:
-# 	"$HOME/PSC-scDRS/output/bcf_variants.vcf
-#	"$HOME/00-All.vcf.gz
-# output:
-#	"$HOME/PSC-scDRS/output/bcf_variants.vcf.gz
-#	"$HOME/PSC-scDRS/output/variants_with_rsID.vcf
-#========================================================================
-##!/bin/bash
-
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Prefer paths exported by PSC_scDRS_run.sh
+# Fallback: infer repo root as parent of this script (assumes script is in <repo>/bin/)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"   # if this script is in bin/
-# If stp2 is NOT in bin/, set REPO_DIR="$SCRIPT_DIR" instead.
+REPO_DIR="${REPO_DIR:-$(cd "$SCRIPT_DIR/.." && pwd)}"
+OUT_DIR="${OUT_DIR:-$REPO_DIR/output}"
 
-input_vcf="$REPO_DIR/output/bcf_variants.vcf"
-output_vcf="$REPO_DIR/output/bcf_variants.vcf.gz"
-annotated_vcf="$REPO_DIR/output/variants_with_rsID.vcf"
+# Inputs/outputs
+input_vcf="$OUT_DIR/bcf_variants.vcf"
+output_vcf_gz="$OUT_DIR/bcf_variants.vcf.gz"
+annotated_vcf="$OUT_DIR/variants_with_rsID.vcf"
 
-DBSNP_VCF="$REPO_DIR/vcf/00-All.vcf.gz"    # if you store dbSNP inside repo/vcf
-# If you store dbSNP outside repo (e.g. ~/vcf), point to it explicitly.
+# dbSNP path (inside repo by default)
+DBSNP_VCF="${DBSNP_VCF:-$REPO_DIR/vcf/00-All.vcf.gz}"
 
-if [ ! -f "$input_vcf" ]; then
-  echo "File does not exist: $input_vcf"
-  exit 1
-fi
+# ---- Checks ----
+command -v bgzip >/dev/null 2>&1 || { echo "ERROR: bgzip not found (install tabix/htslib)."; exit 1; }
+command -v bcftools >/dev/null 2>&1 || { echo "ERROR: bcftools not found."; exit 1; }
 
-if [ ! -f "$DBSNP_VCF" ]; then
-  echo "dbSNP VCF not found: $DBSNP_VCF"
-  exit 1
-fi
+[ -f "$input_vcf" ] || { echo "ERROR: Input VCF not found: $input_vcf"; exit 1; }
+[ -f "$DBSNP_VCF" ] || { echo "ERROR: dbSNP VCF not found: $DBSNP_VCF"; exit 1; }
 
-bgzip -f -c "$input_vcf" > "$output_vcf"
-bcftools index -t "$output_vcf"
-bcftools annotate -a "$DBSNP_VCF" -c ID "$output_vcf" -o "$annotated_vcf"
+mkdir -p "$OUT_DIR"
+
+# ---- Work ----
+bgzip -f -c "$input_vcf" > "$output_vcf_gz"
+bcftools index -t "$output_vcf_gz"
+
+# Annotate rsIDs from dbSNP (ID column)
+bcftools annotate -a "$DBSNP_VCF" -c ID "$output_vcf_gz" -o "$annotated_vcf"
+
 echo "Wrote: $annotated_vcf"
