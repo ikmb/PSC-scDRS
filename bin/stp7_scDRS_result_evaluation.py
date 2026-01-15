@@ -3,167 +3,200 @@
 """
 @author: Seirana
 
-
 This program:
-    1. calculates the variables of log-threshold formula -> threshold = a + b / log10(cell_count)
-    2. reads the result of scDRS analyses and reports associated cell-types
+  1) calculates the variables of log-threshold formula -> threshold = a + b / log10(cell_count)
+  2) reads the result of scDRS analyses and reports associated cell-types
 
 input:
-    min_cell_count = 150
-    up_threshold = 5
-    factor = 100
-    ./PSC-scDRS/output/{trait}.scdrs_group.cell_ontology_class
-    
+  min_cell_count = 150
+  up_threshold = 5
+  factor = 100
+  <repo>/output/{trait}.scdrs_group.cell_ontology_class
+
 output:
-    ./PSC-scDRS/output/log_threshod.png
-    ./PSC-scDRS/output/{trait}_cell assiciation with_{tissue}
+  <repo>/output/log_threshold.png
+  <repo>/output/{trait}_cell_association_with_{tissue}.csv
 """
 
-
+import os
 import sys
 from pathlib import Path
-sys.path.append(str(Path.home() / "PSC-scDRS" / "bin"))
 
-from sympy import symbols, Eq, log, solve
-import matplotlib.pyplot as plt
-import read_write as rw
-import pandas as pd
 import numpy as np
-import os
+import pandas as pd
+import matplotlib.pyplot as plt
+from sympy import symbols, Eq, log, solve
 
-def log_threshold(out_dirc):
-    # Define symbols for a and b
+
+def get_paths() -> tuple[Path, Path, Path]:
+    """
+    Prefer env vars exported by PSC_scDRS_run.sh:
+      REPO_DIR, BIN_DIR, OUT_DIR
+    Fallback: infer repo as parent of this script's directory (bin/ -> repo/)
+    """
+    repo_env = os.environ.get("REPO_DIR")
+    bin_env = os.environ.get("BIN_DIR")
+    out_env = os.environ.get("OUT_DIR")
+
+    if repo_env:
+        repo_dir = Path(repo_env).resolve()
+        bin_dir = Path(bin_env).resolve() if bin_env else (repo_dir / "bin")
+        out_dir = Path(out_env).resolve() if out_env else (repo_dir / "output")
+        return repo_dir, bin_dir, out_dir
+
+    script_dir = Path(__file__).resolve().parent
+    repo_dir = script_dir.parent
+    bin_dir = repo_dir / "bin"
+    out_dir = repo_dir / "output"
+    return repo_dir, bin_dir, out_dir
+
+
+repo_dir, bin_dir, out_dir = get_paths()
+out_dir.mkdir(parents=True, exist_ok=True)
+
+# Make sure we can import read_write from repo/bin
+sys.path.insert(0, str(bin_dir))
+import read_write as rw  # noqa: E402
+
+
+def log_threshold(out_dirc: Path):
     a, b = symbols("a b")
-    
+
     min_cell_count = 150
     up_threshold = 5
-    
+
     factor = 100
-    max_cell_count = 150 * factor
-    low_threshold = up_threshold/factor
-    
-    # Set up the two equations based on the given conditions
+    max_cell_count = min_cell_count * factor
+    low_threshold = up_threshold / factor
+
     eq1 = Eq(a + b / log(min_cell_count, 10), up_threshold)
     eq2 = Eq(a + b / log(max_cell_count, 10), low_threshold)
-    
-    # Solve the system of equations for a and b
+
     solution = solve((eq1, eq2), (a, b))
     a_fit, b_fit = solution[a], solution[b]
-    #print(a_fit,b_fit)
-    
-    # Define the threshold function with the solved parameters
-    def tr(x, a=a_fit, b=b_fit):
-        return a + b / np.log10(x)
-    
-    # Generate x values for plotting the fitted curve
-    x_values = np.logspace(2.1, 6, 100)  # From 100 to 10000, logarithmic scale
-    y_values = np.maximum(tr(x_values),1)
-    
-    # Plot the fitted curve and the original data points
-    plt.figure(figsize=(8, 6))
-    plt.plot(x_values, y_values, label=f"Threshold function: $tr(x) = {a_fit:.2f} + {b_fit:.2f}/\\log_{{10}}(x)$", color="b")
+
+    def tr(x, a_=a_fit, b_=b_fit):
+        return a_ + b_ / np.log10(x)
+
+    x_values = np.logspace(2.1, 6, 100)
+    y_values = np.maximum(tr(x_values), 1)
+
+    fig = plt.figure(figsize=(8, 6))
+    plt.plot(
+        x_values,
+        y_values,
+        label=f"tr(x) = {float(a_fit):.2f} + {float(b_fit):.2f}/log10(x)",
+        color="b",
+    )
     plt.axhline(y=1, color="green", linestyle="--", label="minimum threshold")
     plt.xscale("log")
-    plt.yscale("linear")
     plt.xlabel("Cell Count")
     plt.ylabel("Threshold (%)")
     plt.title("Logarithmic Threshold Model")
     plt.grid(True, which="both", ls="--", linewidth=0.5)
     plt.legend()
-    plt.savefig(str(out_dirc / "log_threshod.png"))
-    plt.show()
-    return a_fit,b_fit
+
+    plot_path = out_dirc / "log_threshold.png"
+    plt.savefig(str(plot_path), dpi=200, bbox_inches="tight")
+    plt.close(fig)
+    print("Saved:", plot_path)
+
+    return float(a_fit), float(b_fit)
 
 
-def read_file(trait, tissue, out_dirc):
-    file = str(out_dirc / f"{trait}.scdrs_group.cell_ontology_class")
-    if os.path.exists(file):
-        with open(file) as f:
-            lines = f.readlines()
+def read_scdrs_group_file(trait: str, out_dirc: Path) -> pd.DataFrame:
+    """
+    Reads: <out_dir>/{trait}.scdrs_group.cell_ontology_class
+    This is typically a TSV.
+    """
+    fpath = out_dirc / f"{trait}.scdrs_group.cell_ontology_class"
+    if not fpath.exists():
+        return pd.DataFrame()
 
-        split = ("	")
-        clmns = lines[0]
-        clmns = list(clmns.split(split))
-        l = len(clmns)
-        if clmns[l-1].endswith("\n"):
-            s = clmns[l-1]
-            sl = len(s)
-            clmns[l-1] = s[0:sl-1]
-    
-        y = pd.DataFrame([x.strip().split(split)
-                         for x in lines], columns=clmns)
-        y.reset_index(drop=True, inplace=True)
-    
-        y.columns = y.loc[0, :]
-        y.drop(y.index[0], axis=0, inplace=True)
-        y.reset_index(drop=True, inplace=True)
-        y["group"] = y["group"].str.replace(",", "_", regex=False)
-        return y
-    else:
-        y = pd.DataFrame()
-        return y
+    # Usually scDRS outputs tab-separated text with header
+    df = pd.read_csv(fpath, sep="\t")
+    if "group" in df.columns:
+        df["group"] = df["group"].astype(str).str.replace(",", "_", regex=False)
+    return df
 
 
-def floatTOnumber(db):
-    db.replace({"n_fdr_0.05": {"": 0}}, inplace=True)
-    db["n_fdr_0.05"] = db["n_fdr_0.05"].astype(float)
-
-    db.replace({"assoc_mcp": {"": 0}}, inplace=True)
-    db["assoc_mcp"] = db["assoc_mcp"].astype(float)
-
-    db.replace({"hetero_mcp": {"": 0}}, inplace=True)
-    db["hetero_mcp"] = db["hetero_mcp"].astype(float)
+def float_to_number(db: pd.DataFrame) -> pd.DataFrame:
+    for col in ["n_fdr_0.05", "assoc_mcp", "hetero_mcp", "n_cell"]:
+        if col in db.columns:
+            db[col] = db[col].replace({"": 0}).astype(float)
     return db
 
 
 if __name__ == "__main__":
-    out_dirc = Path.home() / "PSC-scDRS" / "output"
-    a,b = log_threshold(out_dirc)
-    columns = ["tissue", "trait", "cell", "n cell","assoc.", "hetero.", "percentage of associated cells with fdr. 0.05", "threshold", "significancy"]
-    
-    trait = "PSC"
-    tissue = "Liver"
-    
-   
+
+    # You can override these from the run script if you want later:
+    trait = os.environ.get("TRAIT", "PSC")
+    tissue = os.environ.get("TISSUE", "Liver")
+
+    a, b = log_threshold(out_dir)
+
+    columns = [
+        "tissue",
+        "trait",
+        "cell",
+        "n cell",
+        "assoc.",
+        "hetero.",
+        "percentage of associated cells with fdr. 0.05",
+        "threshold",
+        "significancy",
+    ]
+
     dig = 5
     final_results = pd.DataFrame(columns=columns)
 
-    db = read_file(trait, tissue, out_dirc)
-    
-    if not db.empty:
-        cells = db.loc[:, "group"]
-        cnt = db.loc[:, "n_cell"]
-        clmn = pd.DataFrame(index=range(len(cells)), columns=columns[4:9])
+    db = read_scdrs_group_file(trait, out_dir)
+    if db.empty:
+        print(f"WARNING: No scDRS group file found for trait={trait} in {out_dir}")
+        sys.exit(0)
 
-        db = floatTOnumber(db)
-        for d in range(len(db)):
-            clmn.iloc[d, 0] = round(float(db.loc[d, "assoc_mcp"]), dig)
-            clmn.iloc[d, 1] = round(float(db.loc[d, "hetero_mcp"]), dig)
-            clmn.iloc[d, 2] = round(
-                float(db.loc[d, "n_fdr_0.05"])/float(db.loc[d, "n_cell"]), dig)*100
-            if float(db.loc[d, "n_fdr_0.05"]) > 0:
-                clmn.iloc[d, 3] = max(a+(b/np.log10(float(db.loc[d, "n_cell"]))),0.005)
-                if clmn.iloc[d, 2] >= clmn.iloc[d, 3]: 
-                    clmn.iloc[d, 4] = 1
-                else:
-                    clmn.iloc[d, 4] = 0
-            else:
-                clmn.iloc[d, 4] = 0
+    required_cols = {"group", "n_cell", "assoc_mcp", "hetero_mcp", "n_fdr_0.05"}
+    missing = required_cols - set(db.columns)
+    if missing:
+        raise ValueError(f"Missing columns {missing} in scDRS group file. Found: {list(db.columns)}")
 
-            if (float(db.loc[d, "n_cell"]) >= 150 and
-               float(db.loc[d, "assoc_mcp"]) <= 0.05 and
-               float(db.loc[d, "n_fdr_0.05"]) > 0):
-                final_results.loc[len(final_results)] = [
-                    tissue,          # "tissue"
-                    trait,           # "trait"
-                    cells.iloc[d],   # "cell"
-                    cnt.iloc[d],     # "n cell"
-                    clmn.iloc[d, 0],  # "assoc."
-                    clmn.iloc[d, 1],  # "hetero."
-                    clmn.iloc[d, 2],  # "fdr. 0.05"
-                    clmn.iloc[d, 3],  # "threshold"
-                    clmn.iloc[d, 4],  # "significancy"
-                ]
+    db = float_to_number(db)
 
-        file = str(out_dirc/f"{trait}_cell assiciation with_{tissue}")
-        rw.write_csv(final_results, file)
+    for d in range(len(db)):
+        cell = str(db.loc[d, "group"])
+        n_cell = float(db.loc[d, "n_cell"])
+        assoc = round(float(db.loc[d, "assoc_mcp"]), dig)
+        hetero = round(float(db.loc[d, "hetero_mcp"]), dig)
+        n_fdr = float(db.loc[d, "n_fdr_0.05"])
+
+        pct = round((n_fdr / n_cell) * 100, dig) if n_cell > 0 else 0.0
+
+        # threshold only meaningful if n_fdr > 0
+        thr = None
+        signif = 0
+        if n_fdr > 0 and n_cell > 0:
+            thr = max(a + (b / np.log10(n_cell)), 0.005)
+            signif = 1 if pct >= thr else 0
+        else:
+            thr = 0.0
+
+        # your filtering logic
+        if (n_cell >= 150 and assoc <= 0.05 and n_fdr > 0):
+            final_results.loc[len(final_results)] = [
+                tissue,
+                trait,
+                cell,
+                int(n_cell),
+                assoc,
+                hetero,
+                pct,
+                thr,
+                signif,
+            ]
+
+    out_csv = out_dir / f"{trait}_cell_association_with_{tissue}.csv"
+    rw.write_csv(final_results, str(out_csv.with_suffix("")))  # rw likely appends .csv itself
+    # If rw.write_csv does NOT append, replace the line above with:
+    # final_results.to_csv(out_csv, index=False)
+
+    print("Saved:", out_csv)
