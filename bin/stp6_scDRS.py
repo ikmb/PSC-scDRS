@@ -3,118 +3,94 @@
 """
 @author: Seirana
 
-This function runs scDRS across the desired traits and tissues.
+Runs scDRS for a given trait and tissue.
 
 input:
-    ./PSC-scDRS/data/{tissue}.h5ad
-    ./PSC-scDRS/output/{trait}_geneset.gs
-    
+    <repo>/data/{tissue}.h5ad   (or <repo>/data/HumanLiverHealthyscRNAseqData.zip as source)
+    <repo>/output/{trait}_geneset.gs
+
 output:
-    ./PSC-scDRS/output/{tissue}_cov.tsv
-    ./PSC-scDRS/output/{tissue}_{trait}.full_score.gz
-    ./PSC-scDRS/output/{tissue}_{trait}.score.gz
-    ./PSC-scDRS/output/{tissue}_{trait}.scdrs_group.cell_ontology_class
-    ./PSC-scDRS/bin/figures/cell_ontology_classes_{tissue}.png
-    ./PSC-scDRS/bin/figures/associated_cells_of_{tissue}_to_{geneset}.png
+    <repo>/output/{tissue}_cov.tsv
+    <repo>/output/{trait}.full_score.gz  (and other scDRS outputs)
+    <repo>/bin/figures/cell_ontology_classes_{tissue}.png
+    <repo>/bin/figures/associated_cells_of_{tissue}_to_{trait}.png
 """
 
+import os
+import sys
+import zipfile
+import warnings
 from pathlib import Path
+
+import numpy as np
 import pandas as pd
 import scanpy as sc
-import numpy as np
 import subprocess
-import warnings
-import zipfile
+
 import scdrs_
-import os
 
 warnings.filterwarnings("ignore")
 
-trait = 'PSC'
-tissue = "Liver"
 
-hm = 'hsapiens'
+def get_paths() -> tuple[Path, Path, Path, Path]:
+    """
+    Prefer env vars exported by PSC_scDRS_run.sh:
+      REPO_DIR, BIN_DIR, DATA_DIR, OUT_DIR
+    Fallback: infer repo as parent of this script's directory (bin/ -> repo/)
+    """
+    repo_env = os.environ.get("REPO_DIR")
+    bin_env = os.environ.get("BIN_DIR")
+    data_env = os.environ.get("DATA_DIR")
+    out_env = os.environ.get("OUT_DIR")
 
-data_dirc = Path.home() /"PSC-scDRS" / "data"
-out_dirc = Path.home() / "PSC-scDRS" / "output"
+    if repo_env:
+        repo_dir = Path(repo_env).resolve()
+        bin_dir = Path(bin_env).resolve() if bin_env else (repo_dir / "bin")
+        data_dir = Path(data_env).resolve() if data_env else (repo_dir / "data")
+        out_dir = Path(out_env).resolve() if out_env else (repo_dir / "output")
+        return repo_dir, bin_dir, data_dir, out_dir
 
-zip_path = data_dirc / "HumanLiverHealthyscRNAseqData.zip"
-target_path = data_dirc / "Liver.h5ad"
-with zipfile.ZipFile(zip_path) as z:
-    h5ad_inside = [n for n in z.namelist() if n.endswith(".h5ad")][0]
-    extracted_path = z.extract(h5ad_inside, data_dirc)
-    Path(extracted_path).rename(target_path)
-    
-adata = sc.read_h5ad(data_dirc / f"{tissue}.h5ad")
+    script_dir = Path(__file__).resolve().parent
+    repo_dir = script_dir.parent
+    bin_dir = repo_dir / "bin"
+    data_dir = repo_dir / "data"
+    out_dir = repo_dir / "output"
+    return repo_dir, bin_dir, data_dir, out_dir
 
-cell_id = adata.obs.index
-cell_id = cell_id.to_frame(index=False)
 
-n_genes = adata.obs.loc[:, ['n_genes']]
-n_genes.index = range(len(n_genes))
+def find_compute_score_py() -> Path:
+    """
+    Find scDRS compute_score.py.
+    Priority:
+      1) env var SCDRS_DIR (expects compute_score.py inside it)
+      2) <repo>/scDRS/compute_score.py
+      3) ~/scDRS/compute_score.py
+    """
+    scdrs_dir = os.environ.get("SCDRS_DIR")
+    candidates = []
 
-const = np.ones((len(cell_id), 1), dtype=int)
-const = pd.DataFrame(columns=['const'], data=const)
-cov = pd.concat([cell_id, n_genes, const], axis=1)
-cov.to_csv(str(out_dirc/f"{tissue}_cov.tsv"), sep="\t", index=False)
+    if scdrs_dir:
+        candidates.append(Path(scdrs_dir) / "compute_score.py")
 
-args = [
-    '--h5ad_file',  str(data_dirc/ f'{tissue}.h5ad'),
-    '--h5ad_species', hm,
-    '--cov_file', str(out_dirc/ f'{tissue}_cov.tsv'),
-    '--gs_file', str(out_dirc/f'{trait}_geneset.gs'),
-    '--gs_species', 'hsapiens',
-    '--ctrl_match_opt', "mean_var",
-    '--weight_opt', "vs",
-    '--flag_raw_count', "False",
-    '--n_ctrl', "1000",
-    '--flag_return_ctrl_raw_score', "False",
-    '--flag_return_ctrl_norm_score', "True",
-    '--out_folder', str(out_dirc)
-]
+    # common locations
+    repo_dir, _, _, _ = get_paths()
+    candidates.append(repo_dir / "scDRS" / "compute_score.py")
+    candidates.append(Path.home() / "scDRS" / "compute_score.py")
 
-subprocess.run(
-    ['python', str(Path.home() /'scDRS/compute_score.py')] + args)
+    for c in candidates:
+        if c.exists():
+            return c.resolve()
 
-geneset = str(out_dirc/f'{trait}_geneset.gs')
-df_gs = pd.read_csv(geneset, sep="\t", index_col=0)
-dict_score = {
-    trait: pd.read_csv(
-        out_dirc/f"{trait}.full_score.gz", sep="\t", index_col=0)
-    for trait in df_gs.index
-    if os.path.isfile(str(out_dirc/f"{trait}.full_score.gz"))
-}
-
-for trait in dict_score:
-    if os.path.isfile(str(out_dirc/f"{trait}.full_score.gz")):
-        adata.obs[trait] = dict_score[trait]["norm_score"]
-
-if len(dict_score) > 0:
-    sc.set_figure_params(figsize=[2.5, 2.5], dpi=150)
-    sc.pl.umap(
-        adata,
-        color="cell_ontology_class",
-        ncols=1,
-        color_map="RdBu_r",
-        vmin=-5,
-        vmax=5,
-        save=f'_cell_ontology_classes_{tissue}.png'
+    raise FileNotFoundError(
+        "Could not find scDRS compute_score.py. "
+        "Set env var SCDRS_DIR to the folder containing compute_score.py, "
+        "or place scDRS under <repo>/scDRS/."
     )
 
-    sc.pl.umap(
-        adata,
-        color=dict_score.keys(),
-        color_map="RdBu_r",
-        vmin=-5,
-        vmax=5,
-        s=20,
-        save=f'_associated_cells_of_{tissue}_to_{trait}.png'
-    )
 
-if os.path.isfile(str(out_dirc/f"{trait}.full_score.gz")):
-    scdrs_.perform_downstream(
-        h5ad_file = str(data_dirc/ f'{tissue}.h5ad'),
-        score_file = str(out_dirc/f"{trait}.full_score.gz"),
-        out_folder = str(out_dirc),
-        group_analysis="cell_ontology_class",
-    )
+# -------------------------
+# User-configurable settings
+# -------------------------
+trait = os.environ.get("TRAIT", "PSC")
+tissue = os.environ.get("TISSUE", "Liver")
+hm = os.environ.get("SCDRS_S_
