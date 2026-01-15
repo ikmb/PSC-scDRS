@@ -96,4 +96,4 @@ cd "$REPO_DIR"
 bash PSC_scDRS_run.sh
 ```
 
-** The final results are stored as <repo>/PSC-coDES/output/PSC cell association with Liver.csv
+** The final results are stored as ./PSC-coDES/output/PSC cell association with Liver.csv
