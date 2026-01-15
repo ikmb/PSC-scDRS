@@ -3,7 +3,7 @@
 # input:
 #	  N=5023 equal to the all samples in the study, cases and controls
 #   ./PSC-scDRS/output/files_for_MAGMA.txt"
-#	  ./PSC-scDRS/output/files_for_step2.txt"
+#  	./PSC-scDRS/output/files_for_step2.txt"
 #	  ./PSC-scDRS/output/files_step1.genes.annot"
 # output:
 #	  ./PSC-scDRS/output/files_step1"
