@@ -48,6 +48,9 @@ cd "$SCRIPT_DIR"
 ENV_NAME="pythonENV"
 VENV_PATH="$SCRIPT_DIR/$ENV_NAME"
 
+mkdir -p "$SCRIPT_DIR/output/logs"
+PIP_LOG="$SCRIPT_DIR/output/logs/pip_install.log"
+
 if [ ! -d "$VENV_PATH" ]; then
   echo ">>> Creating Python virtual environment ($ENV_NAME)"
   python3 -m venv "$VENV_PATH"
@@ -67,14 +70,38 @@ source "$VENV_PATH/bin/activate"
 
 REQ_FILE="$SCRIPT_DIR/env/requirements.txt"
 echo ">>> Installing Python dependencies from $REQ_FILE"
+echo ">>> Logging pip output to: $PIP_LOG"
 
 if [ ! -f "$REQ_FILE" ]; then
   echo "requirements.txt not found at $REQ_FILE"
   exit 1
 fi
 
-python3 -m pip install --upgrade pip
-python3 -m pip install -r "$REQ_FILE"
+# Always use the venv python/pip explicitly (avoids PATH confusion)
+PYTHON="$VENV_PATH/bin/python"
+PIP="$VENV_PATH/bin/pip"
+
+echo ">>> Using: $PYTHON"
+"$PYTHON" -V
+
+# Upgrade packaging tools (important for reliability)
+"$PYTHON" -m pip install --upgrade pip setuptools wheel 2>&1 | tee "$PIP_LOG"
+
+# Install requirements
+"$PYTHON" -m pip install --no-cache-dir -r "$REQ_FILE" 2>&1 | tee -a "$PIP_LOG"
+
+# ---- HARD CHECK: scdrs must import ----
+echo ">>> Verifying scdrs installation..."
+if ! "$PYTHON" -c "import scdrs; print('OK scdrs import:', getattr(scdrs,'__version__','unknown')); print('Location:', scdrs.__file__)" 2>&1 | tee -a "$PIP_LOG"; then
+  echo
+  echo "WARNING: scdrs not importable after requirements install."
+  echo ">>> Attempting explicit install: scdrs==1.0.2"
+  "$PYTHON" -m pip install --no-cache-dir "scdrs==1.0.2" 2>&1 | tee -a "$PIP_LOG"
+
+  echo ">>> Re-verifying scdrs..."
+  "$PYTHON" -c "import scdrs; print('OK scdrs import:', getattr(scdrs,'__version__','unknown')); print('Location:', scdrs.__file__)" 2>&1 | tee -a "$PIP_LOG" \
+    || { echo "ERROR: scdrs still not importable. See $PIP_LOG"; exit 1; }
+fi
 
 echo
 echo ">>> Python environment ready."
