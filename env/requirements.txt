@@ -10,4 +10,3 @@ scanpy
 numpy
 scipy
 gdown
-scdrs==1.0.2
