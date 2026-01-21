@@ -43,20 +43,8 @@ sudo apt install -y \
 ### Clone PSC-scDRS
 All the codes and needed files for the sample file will be downloaded in this step.
 
-2) Clone data and files for the PSC-scDRS project if missing,
 ```bash
-git clone https://github.com/ikmb/PSC-scDRS.git
-cd PSC-scDRS
-mkdir -p data
-wget -O "data/HumanLiverHealthyscRNAseqData.zip" \
-"https://github.com/seirana/PSC-scDRS/raw/main/data/HumanLiverHealthyscRNAseqData.zip"
-
-```
-
-or re-download
-```bash
-BASE_DIR="$(pwd)"
-rm -rf "$BASE_DIR/PSC-scDRS"
+cd ~
 git clone https://github.com/ikmb/PSC-scDRS.git
 cd PSC-scDRS
 mkdir -p data
